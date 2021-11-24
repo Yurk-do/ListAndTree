@@ -1,0 +1,15 @@
+.dialog-window .p-button {
+  margin: 0 0.5rem 0 0;
+  min-width: 10rem;
+}
+
+.dialog-window .p-dialog .p-button {
+  min-width: 6rem;
+}
+
+.messages {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 10;
+}
