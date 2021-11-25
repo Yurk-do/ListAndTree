@@ -1,1 +1,1 @@
-export const SAVE_DATA = 'SAVE_DATA';
+export const SET_PROJECTS_DATA = 'SET_PROJECTS_DATA';

@@ -1,10 +1,10 @@
-import { FC, ReactNode } from "react";
-import { Button } from "primereact/button";
-import { Dialog } from "primereact/dialog";
+import { FC, ReactNode } from 'react';
+import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
 
-import "./dialogWindow.css";
+import './dialogWindow.scss';
 
-import "primeflex/primeflex.css";
+import 'primeflex/primeflex.scss';
 
 type DialogWindowPropsType = {
   children: ReactNode;
@@ -29,7 +29,7 @@ const DialogWindow: FC<DialogWindowPropsType> = ({
       <Dialog
         className="dialog-window p-fluid p-formgrid p-grid"
         visible={displayBasic}
-        style={{ width: "50vw" }}
+        style={{ width: '50vw' }}
         onHide={hideDialog}
         resizable
       >

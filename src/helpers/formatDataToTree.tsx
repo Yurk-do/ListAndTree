@@ -1,9 +1,17 @@
-import { ProjectsDataListItemType, ProjectsDataTreeItemType } from '../types/types';
+import {
+  ProjectsDataListItemType,
+  ProjectsDataTreeItemType,
+} from '../types/types';
+
+import { dataFolderNames } from './constants';
 
 const concatNameAndPhone = (name: string, phone: string = 'не указан') =>
   `${name}. Телефон: ${phone}`;
 
-const checkItemLabelIsSame = (array: ProjectsDataTreeItemType[], labelName: string) =>
+const checkItemLabelIsSame = (
+  array: ProjectsDataTreeItemType[],
+  labelName: string
+) =>
   array.find(
     (newDataItem: ProjectsDataTreeItemType) => newDataItem?.label === labelName
   );
@@ -18,12 +26,6 @@ const createFolder = (
   data: dataName,
   children: [],
 });
-
-const dataFolderNames = {
-  projectName: 'Projects Folder',
-  position: 'Position Folder',
-  nameAndPhone: 'Names and phones data',
-};
 
 const createTreeElement: Function = (
   parentElement: ProjectsDataTreeItemType | any,
@@ -53,9 +55,11 @@ const createTreeElement: Function = (
   return folder;
 };
 
-export const formatDataToTree = (data: ProjectsDataListItemType[]) => {
+export const formatDataToTree = (
+  data: ProjectsDataListItemType[]
+): ProjectsDataTreeItemType[] => {
   if (!data.length) {
-    return data;
+    return [];
   }
 
   let newDataArray: ProjectsDataTreeItemType[] = [];

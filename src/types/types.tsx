@@ -8,20 +8,19 @@ export type ProjectsDataListItemType = {
 export type ProjectsDataTreeItemType = {
   key: string;
   label: string;
-  data: string | undefined;
+  data?: string;
   children: ProjectsDataTreeItemType[];
-}
+};
 
 export type ProjectsDataActionType = {
   type: string;
-  payload: ProjectsDataListItemType[]
-}
+  payload: ProjectsDataListItemType[];
+};
 
 export type ProjectsDataStateType = {
   projectsData: ProjectsDataListItemType[];
-}
+};
 
 export type StateType = {
-  projectsData: ProjectsDataStateType;
-
+  data: ProjectsDataStateType;
 };
