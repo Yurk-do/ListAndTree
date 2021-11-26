@@ -5,9 +5,14 @@ export type ProjectsDataListItemType = {
   phone: string;
 };
 
+export type NameAndPhoneFolderType = {
+  name: string;
+  phone: string;
+};
+
 export type ProjectsDataTreeItemType = {
   key: string;
-  label: string;
+  label: string | NameAndPhoneFolderType;
   data?: string;
   children: ProjectsDataTreeItemType[];
 };

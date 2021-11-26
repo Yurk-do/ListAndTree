@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import DialogWindow from '../../dialogWindow/DialogWindow';
 import FormForAdd from '../../formForAdd/FormForAdd';
 import FormForEdit from '../../formForEdit/FormForEdit';
@@ -16,6 +16,12 @@ import {
 
 import { useSelector, useDispatch } from 'react-redux';
 import { setProjectsData } from '../../../redux/actionsCreater';
+
+import {
+  findNodeForEdit,
+  createEditedTree,
+  createTreeForRender,
+} from '../../../helpers/editTree';
 
 const Home = () => {
   const dataTypes = {
@@ -50,25 +56,15 @@ const Home = () => {
     setDataTree(formatDataToTree(projectsData));
   }, [projectsData]);
 
-  const updateTree = (
-    tree: any,
-    node: ProjectsDataTreeItemType
-  ): ProjectsDataTreeItemType[] => {
-    const newTree = tree.map((treeItem: ProjectsDataTreeItemType) => {
-      if (treeItem.key === node.key) {
-        treeItem.label = node.label;
-      }
-      if (treeItem.children.length) {
-        updateTree(treeItem.children, node);
-        return treeItem;
-      }
-    });
-    return newTree;
+  const editDataTree = (editedNode: ProjectsDataTreeItemType) => {
+    const newTree = createEditedTree(dataTree, editedNode);
+    setDataTree(newTree);
   };
 
-  const editDataTree = (editedNode: ProjectsDataTreeItemType) => {
-    const newTree = updateTree(dataTree, editedNode);
-    setDataTree(newTree);
+  const selectNodeForEdit = (event: any) => {
+    const editNode = findNodeForEdit(dataTree, event.node);
+    console.log(editNode);
+    setDataForEdit(editNode);
   };
 
   return (
@@ -94,10 +90,11 @@ const Home = () => {
           )}
           {dataType === dataTypes.tree && (
             <Tree
-              value={dataTree}
+              // @ts-ignore
+              value={createTreeForRender(dataTree)}
               className="tree"
               selectionMode="single"
-              onSelect={(event: any) => setDataForEdit(event.node)}
+              onSelect={selectNodeForEdit}
             />
           )}
           {dataType === dataTypes.list && (

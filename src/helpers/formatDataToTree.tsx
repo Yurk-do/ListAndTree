@@ -1,12 +1,10 @@
 import {
   ProjectsDataListItemType,
   ProjectsDataTreeItemType,
+  NameAndPhoneFolderType,
 } from '../types/types';
 
 import { dataFolderNames } from './constants';
-
-const concatNameAndPhone = (name: string, phone: string = 'не указан') =>
-  `${name}. Телефон: ${phone}`;
 
 const checkItemLabelIsSame = (
   array: ProjectsDataTreeItemType[],
@@ -16,13 +14,24 @@ const checkItemLabelIsSame = (
     (newDataItem: ProjectsDataTreeItemType) => newDataItem?.label === labelName
   );
 
-const createFolder = (
+const createTemplateFolder = (
   key: string,
   labelName: string,
   dataName: string
 ): ProjectsDataTreeItemType => ({
   key: key,
   label: labelName,
+  data: dataName,
+  children: [],
+});
+
+const createNameAndPhoneFolder = (
+  key: string,
+  nameAndPhone: NameAndPhoneFolderType,
+  dataName: string
+): ProjectsDataTreeItemType => ({
+  key: key,
+  label: nameAndPhone,
   data: dataName,
   children: [],
 });
@@ -37,15 +46,19 @@ const createTreeElement: Function = (
     : parentElement.key + '-' + parentElement.children.length;
 
   if (!parentElement.data) {
-    folder = createFolder(key, item.projectName, dataFolderNames.projectName);
+    folder = createTemplateFolder(
+      key,
+      item.projectName,
+      dataFolderNames.projectName
+    );
   }
   if (parentElement.data === dataFolderNames.projectName) {
-    folder = createFolder(key, item.position, dataFolderNames.position);
+    folder = createTemplateFolder(key, item.position, dataFolderNames.position);
   }
   if (parentElement.data === dataFolderNames.position) {
-    folder = createFolder(
+    folder = createNameAndPhoneFolder(
       key,
-      concatNameAndPhone(item.fullName, item.phone),
+      { name: item.fullName, phone: item.phone },
       dataFolderNames.nameAndPhone
     );
     return folder;
