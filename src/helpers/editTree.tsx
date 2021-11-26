@@ -7,18 +7,18 @@ const concatNameAndPhone = (name: string, phone: string = 'не указан') =
 export const createTreeForRender = (
   tree: ProjectsDataTreeItemType[]
 ): ProjectsDataTreeItemType[] => {
-  const newTree = tree.map((treeItem: any) => {
-    let newTreeItem = { ...treeItem };
-    if (treeItem.data === dataFolderNames.nameAndPhone) {
-      newTreeItem.label = concatNameAndPhone(
-        treeItem.label.name,
-        treeItem.label.phone
+  const newTree = tree.map((itemTree: any) => {
+    let newItemTree = { ...itemTree };
+    if (itemTree.data === dataFolderNames.nameAndPhone) {
+      newItemTree.label = concatNameAndPhone(
+        itemTree.label.name,
+        itemTree.label.phone
       );
     }
-    if (treeItem.children.length) {
-      newTreeItem.children = createTreeForRender(treeItem.children);
+    if (itemTree.children.length) {
+      newItemTree.children = createTreeForRender(itemTree.children);
     }
-    return newTreeItem;
+    return newItemTree;
   });
   return newTree;
 };

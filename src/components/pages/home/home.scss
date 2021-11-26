@@ -9,7 +9,7 @@
   .content {
     border: 2px solid black;
     padding: 10px;
-    min-height: 500px;
+    min-height: 400px;
     margin-top: 20px;
     margin-bottom: 20px;
   }
@@ -37,4 +37,9 @@
   .message-no-data {
     margin: 30px;
   }
+}
+.label {
+  height: 100%;
+  line-height: 40px;
+  font-size: 18px;
 }
