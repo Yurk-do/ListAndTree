@@ -2,7 +2,7 @@
   margin-top: 50px;
 
   .information {
-    width: 800px;
+    width: 750px;
     margin-bottom: 20px;
   }
 
@@ -37,9 +37,22 @@
   .message-no-data {
     margin: 30px;
   }
-}
-.label {
-  height: 100%;
-  line-height: 40px;
-  font-size: 18px;
+
+  .p-treenode-content,
+  .p-treenode-selectable {
+    width: 100%;
+    span {
+      display: block;
+      width: 100%;
+    }
+  }
+
+  .tree-node-container {
+    width: 100%;
+  }
+  .label {
+    height: 100%;
+    line-height: 40px;
+    font-size: 18px;
+  }
 }

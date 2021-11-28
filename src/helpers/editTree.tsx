@@ -44,8 +44,9 @@ export const createEditedTree = (
     }
     if (treeItem.children.length) {
       createEditedTree(treeItem.children, node);
-      return treeItem;
     }
+    return treeItem;
   });
+
   return newTree;
 };

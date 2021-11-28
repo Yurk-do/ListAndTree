@@ -10,4 +10,3 @@ export const dataFolderNames = {
   position: 'Position Folder',
   nameAndPhone: 'Names and phones data',
 };
-

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import DialogWindow from '../../dialogWindow/DialogWindow';
-import FormForAdd from '../../formForAdd/FormForAdd';
-import FormForEdit from '../../formForEdit/FormForEdit';
+import AddTreeElementForm from '../../forms/addTreeElementForm/AddTreeElementForm';
+import EditForm from '../../forms/editForm/EditForm';
 
 import './home.scss';
 import { Tree } from 'primereact/tree';
@@ -61,6 +61,10 @@ const Home = () => {
     setDataTree(formatDataToTree(projectsData));
   }, [projectsData]);
 
+  useEffect(() => {
+    console.log(dataTree);
+  }, []);
+
   const editDataTree = (editedNode: ProjectsDataTreeItemType) => {
     const newTree = createEditedTree(dataTree, editedNode);
     setDataTree(newTree);
@@ -86,6 +90,7 @@ const Home = () => {
     if (node.data === dataFolderNames.nameAndPhone) {
       setDataTree(deleteNameFolder(dataTree, node));
     }
+    setDataForEdit(null);
   };
 
   const addNodeHandler = (event: any, node: ProjectsDataTreeItemType) => {
@@ -101,18 +106,18 @@ const Home = () => {
           </div>
         </div>
         <div className="tree-node-button-container">
+          {node.data !== dataFolderNames.nameAndPhone && (
+            <Button
+              label="Add"
+              className=" p-button-rounded button-add p-mr-4 p-button-sm"
+              onClick={(event) => addNodeHandler(event, node)}
+            />
+          )}
           <Button
             label="Delete"
             className="button-delete p-button-rounded p-button-danger p-button-sm"
             onClick={(event) => deleteNodeHandler(event, node)}
           />
-          {node.data !== dataFolderNames.nameAndPhone && (
-            <Button
-              label="Add"
-              className=" p-button-rounded button-add p-ml-5 p-button-sm"
-              onClick={(event) => addNodeHandler(event, node)}
-            />
-          )}
         </div>
       </div>
     );
@@ -167,11 +172,14 @@ const Home = () => {
           hideDialog={() => setDialogWindowStatus(false)}
           displayBasic={dialogWindowStatus}
         >
-          <FormForAdd data={formForAddData} sendData={saveProjectsData} />
+          <AddTreeElementForm
+            data={formForAddData}
+            sendData={saveProjectsData}
+          />
         </DialogWindow>
       </div>
       {dataForEdit && (
-        <FormForEdit data={dataForEdit} sendEditedData={editDataTree} />
+        <EditForm data={dataForEdit} sendEditedData={editDataTree} />
       )}
     </div>
   );

@@ -1,10 +1,13 @@
 import { FC, useEffect, useState } from 'react';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
-import { ProjectsDataTreeItemType } from '../../types/types';
-import { dataFolderNames } from '../../helpers/constants';
+import {
+  ProjectsDataTreeItemType,
+  NameAndPhoneFolderType,
+} from '../../../types/types';
+import { dataFolderNames } from '../../../helpers/constants';
 
-import './formForEdit.scss';
+import './editForm.scss';
 
 interface FormPropsType {
   data: ProjectsDataTreeItemType;
@@ -12,8 +15,6 @@ interface FormPropsType {
 }
 
 const FormForEdit: FC<FormPropsType> = ({ data, sendEditedData }) => {
-  console.log(data);
-
   const [editData, setEditData] = useState(data);
 
   const changeInputData = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,8 +24,10 @@ const FormForEdit: FC<FormPropsType> = ({ data, sendEditedData }) => {
       };
       setEditData((previousEditData) => ({
         ...previousEditData,
-        // @ts-ignore
-        label: { ...previousEditData.label, ...newLabel },
+        label: {
+          ...(previousEditData.label as NameAndPhoneFolderType),
+          ...newLabel,
+        },
       }));
     } else {
       setEditData((previousEditData) => ({
@@ -35,13 +38,12 @@ const FormForEdit: FC<FormPropsType> = ({ data, sendEditedData }) => {
   };
 
   useEffect(() => {
-    setEditData(data);
     sendEditedData(editData);
-    console.log(editData);
+    setEditData(data);
   }, [data, editData]);
 
   return (
-    <div className="form-edit-container">
+    <div className="edit-form-container">
       {
         <form
           className="p-d-flex p-flex-column p-mt-6 p-jc-center "
@@ -55,8 +57,7 @@ const FormForEdit: FC<FormPropsType> = ({ data, sendEditedData }) => {
                 </label>
                 <InputText
                   id="name"
-                  // @ts-ignore
-                  value={editData.label.name}
+                  value={(editData.label as NameAndPhoneFolderType).name}
                   onChange={changeInputData}
                 />
               </div>
@@ -66,8 +67,7 @@ const FormForEdit: FC<FormPropsType> = ({ data, sendEditedData }) => {
                 </label>
                 <InputText
                   id="phone"
-                  // @ts-ignore
-                  value={editData.label.phone}
+                  value={(editData.label as NameAndPhoneFolderType).phone}
                   onChange={changeInputData}
                 />
               </div>
@@ -78,9 +78,7 @@ const FormForEdit: FC<FormPropsType> = ({ data, sendEditedData }) => {
                 {editData.data}
               </label>
               <InputText
-                id={editData.data}
-                // @ts-ignore
-                value={editData.label}
+                value={editData.label as string}
                 onChange={changeInputData}
               />
             </div>

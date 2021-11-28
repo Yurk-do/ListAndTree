@@ -12,7 +12,7 @@ interface FormPropsType {
   sendData: (data: any) => void;
 }
 
-const FormForAdd: FC<FormPropsType> = ({ data, sendData }) => {
+const AddTreeElementForm: FC<FormPropsType> = ({ data, sendData }) => {
   const inputsNames: any = {};
 
   data.forEach((dataItem) => (inputsNames[dataItem.inputName] = ''));
@@ -59,4 +59,4 @@ const FormForAdd: FC<FormPropsType> = ({ data, sendData }) => {
   );
 };
 
-export default FormForAdd;
+export default AddTreeElementForm;
