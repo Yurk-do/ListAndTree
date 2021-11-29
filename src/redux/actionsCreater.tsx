@@ -1,14 +1,14 @@
 import {
-  ProjectsDataActionType, ProjectsDataListItemType
+  ProjectsDataActionType,
+  ProjectsDataListItemType,
 } from '../types/types';
-import {
-  SAVE_DATA,
-} from './actionTypes';
+import { SET_PROJECTS_DATA } from './actionTypes';
 
-export function saveData(data: ProjectsDataListItemType[]): ProjectsDataActionType {
+export function setProjectsData(
+  data: ProjectsDataListItemType[]
+): ProjectsDataActionType {
   return {
-    type: SAVE_DATA,
+    type: SET_PROJECTS_DATA,
     payload: data,
   };
 }
-

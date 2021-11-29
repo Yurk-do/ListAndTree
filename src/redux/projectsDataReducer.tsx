@@ -1,6 +1,4 @@
-import {
-  SAVE_DATA,
-} from './actionTypes';
+import { SET_PROJECTS_DATA } from './actionTypes';
 import { ProjectsDataStateType, ProjectsDataActionType } from '../types/types';
 
 const initialState: ProjectsDataStateType = {
@@ -12,7 +10,7 @@ export const projectsDataReducer = (
   { type, payload }: ProjectsDataActionType
 ) => {
   switch (type) {
-    case SAVE_DATA:
+    case SET_PROJECTS_DATA:
       return { ...state, projectsData: [...state.projectsData, payload] };
     default:
       return state;

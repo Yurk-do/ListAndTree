@@ -12,7 +12,7 @@ interface FormPropsType {
   sendData: (data: any) => void;
 }
 
-const Form: FC<FormPropsType> = ({ data, sendData }) => {
+const AddTreeElementForm: FC<FormPropsType> = ({ data, sendData }) => {
   const inputsNames: any = {};
 
   data.forEach((dataItem) => (inputsNames[dataItem.inputName] = ''));
@@ -28,19 +28,19 @@ const Form: FC<FormPropsType> = ({ data, sendData }) => {
 
   return (
     <form
-      className='p-d-flex p-flex-column p-ai-center p-mt-5'
+      className="p-d-flex p-flex-column p-ai-center p-mt-5"
       onSubmit={(event) => event.preventDefault()}
     >
       {data.map((dataItem: ItemFormType) => (
         <>
-          <div className='p-field p-col-11 p-pb-5' key={dataItem.inputName}>
-            <span className='p-float-label'>
+          <div className="p-field p-col-11 p-pb-5" key={dataItem.inputName}>
+            <span className="p-float-label">
               <InputText
                 id={dataItem.inputName}
                 value={formData[dataItem.inputName]}
                 onChange={changeInputData}
               />
-              <label htmlFor='fullName' className='p-mr-2'>
+              <label htmlFor="fullName" className="p-mr-2">
                 {dataItem.labelName}
               </label>
             </span>
@@ -49,8 +49,8 @@ const Form: FC<FormPropsType> = ({ data, sendData }) => {
       ))}
       <div>
         <Button
-          label='Добавить'
-          icon='pi pi-check'
+          label="Добавить"
+          icon="pi pi-check"
           autoFocus
           onClick={() => sendData(formData)}
         />
@@ -59,4 +59,4 @@ const Form: FC<FormPropsType> = ({ data, sendData }) => {
   );
 };
 
-export default Form;
+export default AddTreeElementForm;

@@ -5,23 +5,27 @@ export type ProjectsDataListItemType = {
   phone: string;
 };
 
+export type NameAndPhoneFolderType = {
+  name: string;
+  phone: string;
+};
+
 export type ProjectsDataTreeItemType = {
   key: string;
-  label: string;
-  data: string | undefined;
+  label: string | NameAndPhoneFolderType;
+  data?: string;
   children: ProjectsDataTreeItemType[];
-}
+};
 
 export type ProjectsDataActionType = {
   type: string;
-  payload: ProjectsDataListItemType[]
-}
+  payload: ProjectsDataListItemType[];
+};
 
 export type ProjectsDataStateType = {
   projectsData: ProjectsDataListItemType[];
-}
+};
 
 export type StateType = {
-  projectsData: ProjectsDataStateType;
-
+  data: ProjectsDataStateType;
 };

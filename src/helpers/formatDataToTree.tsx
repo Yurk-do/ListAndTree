@@ -1,14 +1,20 @@
-import { ProjectsDataListItemType, ProjectsDataTreeItemType } from '../types/types';
+import {
+  ProjectsDataListItemType,
+  ProjectsDataTreeItemType,
+  NameAndPhoneFolderType,
+} from '../types/types';
 
-const concatNameAndPhone = (name: string, phone: string = 'не указан') =>
-  `${name}. Телефон: ${phone}`;
+import { dataFolderNames } from './constants';
 
-const checkItemLabelIsSame = (array: ProjectsDataTreeItemType[], labelName: string) =>
+const checkItemLabelIsSame = (
+  array: ProjectsDataTreeItemType[],
+  labelName: string
+) =>
   array.find(
     (newDataItem: ProjectsDataTreeItemType) => newDataItem?.label === labelName
   );
 
-const createFolder = (
+const createTemplateFolder = (
   key: string,
   labelName: string,
   dataName: string
@@ -19,11 +25,16 @@ const createFolder = (
   children: [],
 });
 
-const dataFolderNames = {
-  projectName: 'Projects Folder',
-  position: 'Position Folder',
-  nameAndPhone: 'Names and phones data',
-};
+const createNameAndPhoneFolder = (
+  key: string,
+  nameAndPhone: NameAndPhoneFolderType,
+  dataName: string
+): ProjectsDataTreeItemType => ({
+  key: key,
+  label: nameAndPhone,
+  data: dataName,
+  children: [],
+});
 
 const createTreeElement: Function = (
   parentElement: ProjectsDataTreeItemType | any,
@@ -35,15 +46,19 @@ const createTreeElement: Function = (
     : parentElement.key + '-' + parentElement.children.length;
 
   if (!parentElement.data) {
-    folder = createFolder(key, item.projectName, dataFolderNames.projectName);
+    folder = createTemplateFolder(
+      key,
+      item.projectName,
+      dataFolderNames.projectName
+    );
   }
   if (parentElement.data === dataFolderNames.projectName) {
-    folder = createFolder(key, item.position, dataFolderNames.position);
+    folder = createTemplateFolder(key, item.position, dataFolderNames.position);
   }
   if (parentElement.data === dataFolderNames.position) {
-    folder = createFolder(
+    folder = createNameAndPhoneFolder(
       key,
-      concatNameAndPhone(item.fullName, item.phone),
+      { name: item.fullName, phone: item.phone },
       dataFolderNames.nameAndPhone
     );
     return folder;
@@ -53,9 +68,11 @@ const createTreeElement: Function = (
   return folder;
 };
 
-export const formatDataToTree = (data: ProjectsDataListItemType[]) => {
+export const formatDataToTree = (
+  data: ProjectsDataListItemType[]
+): ProjectsDataTreeItemType[] => {
   if (!data.length) {
-    return data;
+    return [];
   }
 
   let newDataArray: ProjectsDataTreeItemType[] = [];
