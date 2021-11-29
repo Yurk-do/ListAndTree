@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import DialogWindow from '../../dialogWindow/DialogWindow';
 import AddTreeElementForm from '../../forms/addTreeElementForm/AddTreeElementForm';
-import EditForm from '../../forms/editForm/EditForm';
+import EditTreeElementForm from '../../forms/editTreeElementForm/EditTreeElementForm';
 
 import './home.scss';
 import { Tree } from 'primereact/tree';
@@ -27,6 +27,7 @@ import {
   deletePositionFolder,
   deleteNameFolder,
 } from '../../../helpers/deleteFolders';
+import TreeNode from 'primereact/treenode';
 
 const Home = () => {
   const dataTypes = {
@@ -45,6 +46,9 @@ const Home = () => {
   const [dataForEdit, setDataForEdit] =
     useState<ProjectsDataTreeItemType | null>(null);
 
+  const [nodeForAddFolder, setNodeForAddFolder] =
+    useState<ProjectsDataTreeItemType | null>(null);
+
   const saveProjectsData = (data: ProjectsDataListItemType[]) => {
     dispatch(setProjectsData(data));
     setDialogWindowStatus(false);
@@ -60,10 +64,6 @@ const Home = () => {
   useEffect(() => {
     setDataTree(formatDataToTree(projectsData));
   }, [projectsData]);
-
-  useEffect(() => {
-    console.log(dataTree);
-  }, []);
 
   const editDataTree = (editedNode: ProjectsDataTreeItemType) => {
     const newTree = createEditedTree(dataTree, editedNode);
@@ -95,6 +95,8 @@ const Home = () => {
 
   const addNodeHandler = (event: any, node: ProjectsDataTreeItemType) => {
     event.stopPropagation();
+    const nodeForAddFolder = findNodeForEdit(dataTree, node);
+    setNodeForAddFolder(nodeForAddFolder);
   };
 
   const nodeTemplate = (node: ProjectsDataTreeItemType) => {
@@ -148,8 +150,7 @@ const Home = () => {
           )}
           {dataType === dataTypes.tree && (
             <Tree
-              // @ts-ignore
-              value={createTreeForRender(dataTree)}
+              value={createTreeForRender(dataTree) as TreeNode[]}
               nodeTemplate={nodeTemplate}
               className="tree"
               selectionMode="single"
@@ -178,9 +179,14 @@ const Home = () => {
           />
         </DialogWindow>
       </div>
-      {dataForEdit && (
-        <EditForm data={dataForEdit} sendEditedData={editDataTree} />
-      )}
+      <div className="edit-form-container">
+        {dataForEdit && (
+          <EditTreeElementForm
+            data={dataForEdit}
+            sendEditedData={editDataTree}
+          />
+        )}
+      </div>
     </div>
   );
 };
