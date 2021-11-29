@@ -8,7 +8,7 @@ export const createTreeForRender = (
   tree: ProjectsDataTreeItemType[]
 ): ProjectsDataTreeItemType[] => {
   const newTree = tree.map((itemTree: any) => {
-    let newItemTree = { ...itemTree };
+    const newItemTree = { ...itemTree };
     if (itemTree.data === dataFolderNames.nameAndPhone) {
       newItemTree.label = concatNameAndPhone(
         itemTree.label.name,

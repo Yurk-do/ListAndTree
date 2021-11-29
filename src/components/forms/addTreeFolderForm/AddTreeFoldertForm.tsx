@@ -7,88 +7,92 @@ import {
 } from '../../../types/types';
 import { dataFolderNames } from '../../../helpers/constants';
 
-import './editTreeElementForm.scss';
+import { createNewFolder } from '../../../helpers/addFolder';
 
-interface FormPropsType {
-  data: ProjectsDataTreeItemType;
-  sendEditedData: (data: ProjectsDataTreeItemType) => void;
+interface AddTreeFolderFormType {
+  node: ProjectsDataTreeItemType;
+  sendAddedFolder: (data: ProjectsDataTreeItemType) => void;
 }
 
-const EditTreeElementForm: FC<FormPropsType> = ({ data, sendEditedData }) => {
-  const [editData, setEditData] = useState(data);
+const AddTreeFoldertForm: FC<AddTreeFolderFormType> = ({
+  node,
+  sendAddedFolder,
+}) => {
+  const newFolder = createNewFolder(node);
+
+  const [addedFolder, setAddedFolder] =
+    useState<ProjectsDataTreeItemType>(newFolder);
 
   const changeInputData = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (editData.data === dataFolderNames.nameAndPhone) {
+    if (addedFolder.data === dataFolderNames.nameAndPhone) {
       const newLabel = {
         [event.target.id]: event.target.value,
       };
-      setEditData((previousEditData) => ({
-        ...previousEditData,
+      setAddedFolder((previousFolder) => ({
+        ...previousFolder,
         label: {
-          ...(previousEditData.label as NameAndPhoneFolderType),
+          ...(previousFolder.label as NameAndPhoneFolderType),
           ...newLabel,
         },
       }));
     } else {
-      setEditData((previousEditData) => ({
-        ...previousEditData,
+      setAddedFolder((previousFolder) => ({
+        ...previousFolder,
         label: event.target.value,
       }));
     }
   };
-
   useEffect(() => {
-    sendEditedData(editData);
-    setEditData(data);
-  }, [data, editData]);
+    setAddedFolder(newFolder);
+  }, [node]);
 
   return (
     <div>
-      <h2>Форма для редактирования</h2>
+      <h2>Форма для добавления записи</h2>
       <form
         className="p-d-flex p-flex-column p-mt-6 p-jc-center "
         onSubmit={(event) => event.preventDefault()}
       >
-        {editData.data === dataFolderNames.nameAndPhone ? (
+        {addedFolder.data === dataFolderNames.nameAndPhone ? (
           <>
-            <div className="p-field p-col-12 p-pt-5" key={editData.data}>
+            <div className="p-field p-col-12 p-pt-5" key={addedFolder.data}>
               <label htmlFor="fullName" className="p-mr-5 p-d-block">
                 Name:
               </label>
               <InputText
                 id="name"
-                value={(editData.label as NameAndPhoneFolderType).name}
+                value={(addedFolder.label as NameAndPhoneFolderType).name}
                 onChange={changeInputData}
               />
             </div>
-            <div className="p-field p-col-12 p-pt-5" key={editData.data}>
+            <div className="p-field p-col-12 p-pt-5" key={addedFolder.data}>
               <label htmlFor="fullName" className="p-mr-5 p-d-block">
                 Phone:
               </label>
               <InputText
                 id="phone"
-                value={(editData.label as NameAndPhoneFolderType).phone}
+                value={(addedFolder.label as NameAndPhoneFolderType).phone}
                 onChange={changeInputData}
               />
             </div>
           </>
         ) : (
-          <div className="p-field p-col-12 p-pt-5" key={editData.data}>
+          <div className="p-field p-col-12 p-pt-5" key={addedFolder.data}>
             <label htmlFor="fullName" className="p-mr-5 p-d-block">
-              {editData.data}
+              {addedFolder.data}
             </label>
             <InputText
-              value={editData.label as string}
+              value={addedFolder.label as string}
               onChange={changeInputData}
             />
           </div>
         )}
         <div>
           <Button
-            label="Сохранить изменения"
+            label="Добавить запись"
             icon="pi pi-check"
             autoFocus
-            onClick={() => sendEditedData(editData)}
+            onClick={() => sendAddedFolder(addedFolder)}
           />
         </div>
       </form>
@@ -96,4 +100,4 @@ const EditTreeElementForm: FC<FormPropsType> = ({ data, sendEditedData }) => {
   );
 };
 
-export default EditTreeElementForm;
+export default AddTreeFoldertForm;

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import DialogWindow from '../../dialogWindow/DialogWindow';
 import AddTreeElementForm from '../../forms/addTreeElementForm/AddTreeElementForm';
 import EditTreeElementForm from '../../forms/editTreeElementForm/EditTreeElementForm';
+import AddTreeFoldertForm from '../../forms/addTreeFolderForm/AddTreeFoldertForm';
 
 import './home.scss';
 import { Tree } from 'primereact/tree';
@@ -17,16 +18,15 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { setProjectsData } from '../../../redux/actionsCreater';
 
+import { addFolder } from '../../../helpers/addFolder';
+
 import {
   findNodeForEdit,
   createEditedTree,
   createTreeForRender,
 } from '../../../helpers/editTree';
 import { dataFolderNames } from '../../../helpers/constants';
-import {
-  deletePositionFolder,
-  deleteNameFolder,
-} from '../../../helpers/deleteFolders';
+import { deleteFolder } from '../../../helpers/deleteFolder';
 import TreeNode from 'primereact/treenode';
 
 const Home = () => {
@@ -72,35 +72,38 @@ const Home = () => {
 
   const selectNodeForEdit = (event: any) => {
     const editNode = findNodeForEdit(dataTree, event.node);
+    setNodeForAddFolder(null);
     setDataForEdit(editNode);
   };
 
   const deleteNodeHandler = (event: any, node: ProjectsDataTreeItemType) => {
     event.stopPropagation();
-    if (node.data === dataFolderNames.projectName) {
-      return setDataTree(
-        dataTree.filter(
-          (itemTree: ProjectsDataTreeItemType) => itemTree.key !== node.key
-        )
-      );
-    }
-    if (node.data === dataFolderNames.position) {
-      setDataTree(deletePositionFolder(dataTree, node));
-    }
-    if (node.data === dataFolderNames.nameAndPhone) {
-      setDataTree(deleteNameFolder(dataTree, node));
+    switch (node.data) {
+      case dataFolderNames.projectName:
+        setDataTree(
+          dataTree.filter(
+            (itemTree: ProjectsDataTreeItemType) => itemTree.key !== node.key
+          )
+        );
+        break;
+      case dataFolderNames.position:
+        setDataTree(deleteFolder(dataTree, node, node.key[0]));
+        break;
+      case dataFolderNames.nameAndPhone:
+        setDataTree(deleteFolder(dataTree, node, node.key.slice(0, 3)));
+        break;
     }
     setDataForEdit(null);
   };
 
   const addNodeHandler = (event: any, node: ProjectsDataTreeItemType) => {
     event.stopPropagation();
-    const nodeForAddFolder = findNodeForEdit(dataTree, node);
-    setNodeForAddFolder(nodeForAddFolder);
+    setDataForEdit(null);
+    setNodeForAddFolder(node);
   };
 
   const nodeTemplate = (node: ProjectsDataTreeItemType) => {
-    let label = (
+    return (
       <div className="tree-node-container p-flex-row p-d-flex p-jc-between">
         <div className="tree-label-container tree-label-row p-mr-5">
           <div className="label">
@@ -123,8 +126,6 @@ const Home = () => {
         </div>
       </div>
     );
-
-    return <span>{label}</span>;
   };
 
   return (
@@ -184,6 +185,14 @@ const Home = () => {
           <EditTreeElementForm
             data={dataForEdit}
             sendEditedData={editDataTree}
+          />
+        )}
+        {nodeForAddFolder && (
+          <AddTreeFoldertForm
+            node={nodeForAddFolder}
+            sendAddedFolder={(addedFolder) =>
+              setDataTree(addFolder(dataTree, nodeForAddFolder, addedFolder))
+            }
           />
         )}
       </div>
