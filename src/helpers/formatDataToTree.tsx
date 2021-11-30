@@ -14,7 +14,7 @@ const checkItemLabelIsSame = (
     (newDataItem: ProjectsDataTreeItemType) => newDataItem?.label === labelName
   );
 
-const createTemplateFolder = (
+export const createTemplateFolder = (
   key: string,
   labelName: string,
   dataName: string
@@ -25,7 +25,7 @@ const createTemplateFolder = (
   children: [],
 });
 
-const createNameAndPhoneFolder = (
+export const createNameAndPhoneFolder = (
   key: string,
   nameAndPhone: NameAndPhoneFolderType,
   dataName: string
@@ -45,23 +45,27 @@ const createTreeElement: Function = (
     ? parentElement.length.toString()
     : parentElement.key + '-' + parentElement.children.length;
 
-  if (!parentElement.data) {
-    folder = createTemplateFolder(
-      key,
-      item.projectName,
-      dataFolderNames.projectName
-    );
-  }
-  if (parentElement.data === dataFolderNames.projectName) {
-    folder = createTemplateFolder(key, item.position, dataFolderNames.position);
-  }
-  if (parentElement.data === dataFolderNames.position) {
-    folder = createNameAndPhoneFolder(
-      key,
-      { name: item.fullName, phone: item.phone },
-      dataFolderNames.nameAndPhone
-    );
-    return folder;
+  switch (parentElement.data) {
+    case undefined:
+      folder = createTemplateFolder(
+        key,
+        item.projectName,
+        dataFolderNames.projectName
+      );
+      break;
+    case dataFolderNames.projectName:
+      folder = createTemplateFolder(
+        key,
+        item.position,
+        dataFolderNames.position
+      );
+      break;
+    case dataFolderNames.position:
+      return (folder = createNameAndPhoneFolder(
+        key,
+        { name: item.fullName, phone: item.phone },
+        dataFolderNames.nameAndPhone
+      ));
   }
 
   folder.children.push(createTreeElement(folder, item));
@@ -75,7 +79,7 @@ export const formatDataToTree = (
     return [];
   }
 
-  let newDataArray: ProjectsDataTreeItemType[] = [];
+  const newDataArray: ProjectsDataTreeItemType[] = [];
 
   data.forEach((dataItem: ProjectsDataListItemType) => {
     const itemIsSameProject = checkItemLabelIsSame(

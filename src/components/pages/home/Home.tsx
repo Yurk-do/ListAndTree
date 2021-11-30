@@ -1,32 +1,34 @@
 import { useEffect, useState } from 'react';
-import DialogWindow from '../../dialogWindow/DialogWindow';
-import AddTreeElementForm from '../../forms/addTreeElementForm/AddTreeElementForm';
-import EditForm from '../../forms/editForm/EditForm';
-
-import './home.scss';
-import { Tree } from 'primereact/tree';
-import { Button } from 'primereact/button';
-
-import { formatDataToTree } from '../../../helpers/formatDataToTree';
-import {
-  ProjectsDataListItemType,
-  ProjectsDataTreeItemType,
-  StateType,
-} from '../../../types/types';
-
 import { useSelector, useDispatch } from 'react-redux';
 import { setProjectsData } from '../../../redux/actionsCreater';
 
+import DialogWindow from '../../dialogWindow/DialogWindow';
+import AddTreeElementForm from '../../forms/addTreeElementForm/AddTreeElementForm';
+import EditTreeElementForm from '../../forms/editTreeElementForm/EditTreeElementForm';
+import AddTreeFoldertForm from '../../forms/addTreeFolderForm/AddTreeFoldertForm';
+
+import { Tree } from 'primereact/tree';
+import { Button } from 'primereact/button';
+
+import TreeNode from 'primereact/treenode';
+
+import { formatDataToTree } from '../../../helpers/formatDataToTree';
+import { addFolder } from '../../../helpers/addFolder';
 import {
   findNodeForEdit,
   createEditedTree,
   createTreeForRender,
 } from '../../../helpers/editTree';
 import { dataFolderNames } from '../../../helpers/constants';
+import { deleteFolder } from '../../../helpers/deleteFolder';
+
 import {
-  deletePositionFolder,
-  deleteNameFolder,
-} from '../../../helpers/deleteFolders';
+  ProjectsDataListItemType,
+  ProjectsDataTreeItemType,
+  StateType,
+} from '../../../types/types';
+
+import './home.scss';
 
 const Home = () => {
   const dataTypes = {
@@ -45,6 +47,9 @@ const Home = () => {
   const [dataForEdit, setDataForEdit] =
     useState<ProjectsDataTreeItemType | null>(null);
 
+  const [nodeForAddFolder, setNodeForAddFolder] =
+    useState<ProjectsDataTreeItemType | null>(null);
+
   const saveProjectsData = (data: ProjectsDataListItemType[]) => {
     dispatch(setProjectsData(data));
     setDialogWindowStatus(false);
@@ -61,10 +66,6 @@ const Home = () => {
     setDataTree(formatDataToTree(projectsData));
   }, [projectsData]);
 
-  useEffect(() => {
-    console.log(dataTree);
-  }, []);
-
   const editDataTree = (editedNode: ProjectsDataTreeItemType) => {
     const newTree = createEditedTree(dataTree, editedNode);
     setDataTree(newTree);
@@ -72,33 +73,38 @@ const Home = () => {
 
   const selectNodeForEdit = (event: any) => {
     const editNode = findNodeForEdit(dataTree, event.node);
+    setNodeForAddFolder(null);
     setDataForEdit(editNode);
   };
 
   const deleteNodeHandler = (event: any, node: ProjectsDataTreeItemType) => {
     event.stopPropagation();
-    if (node.data === dataFolderNames.projectName) {
-      return setDataTree(
-        dataTree.filter(
-          (itemTree: ProjectsDataTreeItemType) => itemTree.key !== node.key
-        )
-      );
-    }
-    if (node.data === dataFolderNames.position) {
-      setDataTree(deletePositionFolder(dataTree, node));
-    }
-    if (node.data === dataFolderNames.nameAndPhone) {
-      setDataTree(deleteNameFolder(dataTree, node));
+    switch (node.data) {
+      case dataFolderNames.projectName:
+        setDataTree(
+          dataTree.filter(
+            (itemTree: ProjectsDataTreeItemType) => itemTree.key !== node.key
+          )
+        );
+        break;
+      case dataFolderNames.position:
+        setDataTree(deleteFolder(dataTree, node, node.key[0]));
+        break;
+      case dataFolderNames.nameAndPhone:
+        setDataTree(deleteFolder(dataTree, node, node.key.slice(0, 3)));
+        break;
     }
     setDataForEdit(null);
   };
 
   const addNodeHandler = (event: any, node: ProjectsDataTreeItemType) => {
     event.stopPropagation();
+    setDataForEdit(null);
+    setNodeForAddFolder(node);
   };
 
   const nodeTemplate = (node: ProjectsDataTreeItemType) => {
-    let label = (
+    return (
       <div className="tree-node-container p-flex-row p-d-flex p-jc-between">
         <div className="tree-label-container tree-label-row p-mr-5">
           <div className="label">
@@ -121,8 +127,6 @@ const Home = () => {
         </div>
       </div>
     );
-
-    return <span>{label}</span>;
   };
 
   return (
@@ -148,8 +152,7 @@ const Home = () => {
           )}
           {dataType === dataTypes.tree && (
             <Tree
-              // @ts-ignore
-              value={createTreeForRender(dataTree)}
+              value={createTreeForRender(dataTree) as TreeNode[]}
               nodeTemplate={nodeTemplate}
               className="tree"
               selectionMode="single"
@@ -178,9 +181,22 @@ const Home = () => {
           />
         </DialogWindow>
       </div>
-      {dataForEdit && (
-        <EditForm data={dataForEdit} sendEditedData={editDataTree} />
-      )}
+      <div className="edit-form-container">
+        {dataForEdit && (
+          <EditTreeElementForm
+            data={dataForEdit}
+            sendEditedData={editDataTree}
+          />
+        )}
+        {nodeForAddFolder && (
+          <AddTreeFoldertForm
+            node={nodeForAddFolder}
+            sendAddedFolder={(addedFolder) =>
+              setDataTree(addFolder(dataTree, nodeForAddFolder, addedFolder))
+            }
+          />
+        )}
+      </div>
     </div>
   );
 };
