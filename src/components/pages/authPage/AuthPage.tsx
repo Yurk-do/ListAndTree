@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import AuthForm from '../../forms/authForm/AuthForm';
+import NotificationWindow from '../../notificationWindow/NotificationWindow';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -22,6 +23,13 @@ const AuthPage = () => {
   const auth = getAuth();
 
   const navigate = useNavigate();
+
+  const [notificationWindowData, setNotificationWindowData] = useState({
+    message: '',
+    status: false,
+    isError: false,
+  });
+
   const authFormTypes = {
     login: 'login',
     registration: 'registration',
@@ -34,49 +42,56 @@ const AuthPage = () => {
 
   const [authFormType, setAuthFormType] = useState(authFormTypes.login);
 
-  const authenticate = (authFormData: AuthFormData) => {
-    signInWithEmailAndPassword(auth, authFormData.email, authFormData.password)
-      .then((userCredential) => {
-        const userEmail = userCredential.user.email;
-        const userId = userCredential.user.uid;
-        if (userEmail) {
-          localStorage.setItem('userEmail', userEmail);
-        }
-        if (userId) {
-          localStorage.setItem('userId', userId);
-        }
-      })
-      .catch((error) => {
-        console.log(error.code);
-        console.log(error.message);
+  const errorHandler = (error: any) => {
+    setNotificationWindowData({
+      message: error.message,
+      status: true,
+      isError: true,
+    });
+    setTimeout(() => {
+      setNotificationWindowData({
+        ...notificationWindowData,
+        status: false,
       });
+    }, 4000);
   };
 
-  const registerUser = (authFormData: any) => {
+  const userCredentialHandler = (userCredential: any) => {
+    const userEmail = userCredential.user.email;
+    const userId = userCredential.user.uid;
+
+    userEmail && localStorage.setItem('userEmail', userEmail);
+
+    userId && localStorage.setItem('userId', userId);
+
+    navigate(`/home/${userId}`);
+  };
+
+  const loginIn = (authFormData: AuthFormData) => {
+    signInWithEmailAndPassword(auth, authFormData.email, authFormData.password)
+      .then((userCredential) => userCredentialHandler(userCredential))
+      .catch((error) => errorHandler(error));
+  };
+
+  const registerUser = (authFormData: AuthFormData) => {
     createUserWithEmailAndPassword(
       auth,
       authFormData.email,
       authFormData.password
     )
-      .then((userCredential) => {
-        const userEmail = userCredential.user.email;
-        const userId = userCredential.user.uid;
-        if (userEmail) {
-          localStorage.setItem('userEmail', userEmail);
-        }
-        if (userId) {
-          localStorage.setItem('userId', userId);
-        }
-        navigate(`/home/${userId}`);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      .then((userCredential) => userCredentialHandler(userCredential))
+      .catch((error) => errorHandler(error));
   };
 
   return (
     <div>
-      <h1>Login Page</h1>
+      <h1>Auth Page</h1>
+      {notificationWindowData.status && (
+        <NotificationWindow
+          isError={notificationWindowData.isError}
+          notificationMessage={notificationWindowData.message}
+        />
+      )}
       {authFormType === authFormTypes.login && (
         <>
           <Button
@@ -87,7 +102,7 @@ const AuthPage = () => {
           <AuthForm
             formName="Вход в систему"
             inputsData={formInputsData}
-            sendLoginData={authenticate}
+            sendLoginData={loginIn}
             buttonName="Войти в систему"
           />
         </>

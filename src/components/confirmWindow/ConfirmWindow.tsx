@@ -1,24 +1,21 @@
 import { FC } from 'react';
 import './confirmWindow.scss';
+import { Button } from 'primereact/button';
 
 type ConfirmWindowPropsType = {
-  confirm: () => void;
   cancel: () => void;
+  confirm: () => void;
 };
 
-const ConfirmWindow: FC<ConfirmWindowPropsType> = ({ confirm, cancel }) => {
+const ConfirmWindow: FC<ConfirmWindowPropsType> = ({ cancel, confirm }) => {
   return (
     <div className="container-confirm-window">
       <p className="confirm-window-title">
         Вы уверены, что хотите выйти из профиля?
       </p>
       <div className="confirm-window-button-container">
-        <button className="button-confirm" onClick={confirm}>
-          Да
-        </button>
-        <button className="button-cancel" onClick={cancel}>
-          Нет
-        </button>
+        <Button label="Да" className="button-confirm" onClick={confirm} />
+        <Button label="Нет" className="button-cancel" onClick={cancel} />
       </div>
     </div>
   );

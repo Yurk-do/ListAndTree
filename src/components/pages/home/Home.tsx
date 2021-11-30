@@ -90,10 +90,10 @@ const Home = () => {
     { inputName: 'phone', labelName: 'Номер телефона' },
   ];
 
-  // useEffect(() => {
-  //   getDataFromDataBase();
-  //   setDataTree(formatDataToTree(projectsData));
-  // }, [projectsData]);
+  useEffect(() => {
+    getDataFromDataBase();
+    setDataTree(formatDataToTree(projectsData));
+  }, [projectsData]);
 
   useEffect(() => {
     const userEmail = localStorage.getItem('userEmail');
@@ -139,16 +139,12 @@ const Home = () => {
     setNodeForAddFolder(node);
   };
 
-  const loginOut = (event: any) => {
-    console.log(event)
-    console.log('hello');
+  const loginOut = () => {
     localStorage.removeItem('userId');
     localStorage.removeItem('userEmail');
     setConfirmWindowIsActive(false);
-
+    navigate('/');
   };
-
-  console.log(confirmWindowIsActive);
 
   const nodeTemplate = (node: ProjectsDataTreeItemType) => {
     return (
@@ -184,13 +180,13 @@ const Home = () => {
       >
         <span className="user-field-name">User:</span>
         <span className="user-name">{userEmail}</span>
-        {confirmWindowIsActive && (
-          <ConfirmWindow
-            cancel={() => setConfirmWindowIsActive(false)}
-            confirm={loginOut}
-          />
-        )}
       </div>
+      {confirmWindowIsActive && (
+        <ConfirmWindow
+          cancel={() => setConfirmWindowIsActive(false)}
+          confirm={loginOut}
+        />
+      )}
       <div className="information">
         <Button
           className="button-toggle p-mr-4"

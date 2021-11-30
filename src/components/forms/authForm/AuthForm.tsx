@@ -33,10 +33,10 @@ const AuthForm: FC<AuthFormPropsType> = ({
     <form className="auth-form" onSubmit={(event) => event.preventDefault()}>
       <h2>{formName}</h2>
       {inputsData.map((data: any) => (
-        <div className="p-field p-grid">
+        <div>
           <label
             htmlFor={data.name}
-            className="p-col-fixed"
+            className="label"
             style={{ width: '100px' }}
           >
             {data.name}
@@ -50,9 +50,9 @@ const AuthForm: FC<AuthFormPropsType> = ({
           </div>
         </div>
       ))}
-
       <Button
         label={buttonName}
+        className="p-mt-3"
         icon="pi pi-check"
         onClick={() => sendLoginData(formData)}
       />
