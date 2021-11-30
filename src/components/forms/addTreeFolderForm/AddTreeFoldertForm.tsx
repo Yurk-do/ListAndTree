@@ -24,23 +24,20 @@ const AddTreeFoldertForm: FC<AddTreeFolderFormType> = ({
     useState<ProjectsDataTreeItemType>(newFolder);
 
   const changeInputData = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (addedFolder.data === dataFolderNames.nameAndPhone) {
-      const newLabel = {
-        [event.target.id]: event.target.value,
-      };
-      setAddedFolder((previousFolder) => ({
-        ...previousFolder,
-        label: {
-          ...(previousFolder.label as NameAndPhoneFolderType),
-          ...newLabel,
-        },
-      }));
-    } else {
-      setAddedFolder((previousFolder) => ({
-        ...previousFolder,
-        label: event.target.value,
-      }));
-    }
+    const newLabel = {
+      [event.target.id]: event.target.value,
+    };
+
+    setAddedFolder((previousFolder) => ({
+      ...previousFolder,
+      label:
+        addedFolder.data === dataFolderNames.nameAndPhone
+          ? {
+              ...(previousFolder.label as NameAndPhoneFolderType),
+              ...newLabel,
+            }
+          : event.target.value,
+    }));
   };
   useEffect(() => {
     setAddedFolder(newFolder);

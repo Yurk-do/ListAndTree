@@ -1,25 +1,19 @@
 import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setProjectsData } from '../../../redux/actionsCreater';
+
 import DialogWindow from '../../dialogWindow/DialogWindow';
 import AddTreeElementForm from '../../forms/addTreeElementForm/AddTreeElementForm';
 import EditTreeElementForm from '../../forms/editTreeElementForm/EditTreeElementForm';
 import AddTreeFoldertForm from '../../forms/addTreeFolderForm/AddTreeFoldertForm';
 
-import './home.scss';
 import { Tree } from 'primereact/tree';
 import { Button } from 'primereact/button';
 
+import TreeNode from 'primereact/treenode';
+
 import { formatDataToTree } from '../../../helpers/formatDataToTree';
-import {
-  ProjectsDataListItemType,
-  ProjectsDataTreeItemType,
-  StateType,
-} from '../../../types/types';
-
-import { useSelector, useDispatch } from 'react-redux';
-import { setProjectsData } from '../../../redux/actionsCreater';
-
 import { addFolder } from '../../../helpers/addFolder';
-
 import {
   findNodeForEdit,
   createEditedTree,
@@ -27,7 +21,14 @@ import {
 } from '../../../helpers/editTree';
 import { dataFolderNames } from '../../../helpers/constants';
 import { deleteFolder } from '../../../helpers/deleteFolder';
-import TreeNode from 'primereact/treenode';
+
+import {
+  ProjectsDataListItemType,
+  ProjectsDataTreeItemType,
+  StateType,
+} from '../../../types/types';
+
+import './home.scss';
 
 const Home = () => {
   const dataTypes = {
