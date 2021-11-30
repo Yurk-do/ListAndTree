@@ -26,6 +26,17 @@ export type ProjectsDataStateType = {
   projectsData: ProjectsDataListItemType[];
 };
 
+export type AuthStateType = {
+  userName: string;
+  status: false;
+};
+
 export type StateType = {
   data: ProjectsDataStateType;
+  auth: AuthStateType;
+};
+
+export type AuthActionType = {
+  type: string;
+  payload: string;
 };
