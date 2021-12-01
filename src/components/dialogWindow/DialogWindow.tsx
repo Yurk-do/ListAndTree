@@ -11,6 +11,7 @@ type DialogWindowPropsType = {
   showDialog: () => void;
   hideDialog: () => void;
   displayBasic: boolean;
+  buttonName: string;
 };
 
 const DialogWindow: FC<DialogWindowPropsType> = ({
@@ -18,11 +19,12 @@ const DialogWindow: FC<DialogWindowPropsType> = ({
   showDialog,
   hideDialog,
   displayBasic,
+  buttonName,
 }) => {
   return (
     <div>
       <Button
-        label="Добавить"
+        label={buttonName}
         icon="pi pi-external-link"
         onClick={showDialog}
       />

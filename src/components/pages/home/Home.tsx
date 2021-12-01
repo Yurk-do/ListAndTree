@@ -4,10 +4,11 @@ import { setProjectsData } from '../../../redux/actionsCreater';
 import { useNavigate } from 'react-router-dom';
 
 import DialogWindow from '../../dialogWindow/DialogWindow';
-import AddTreeElementForm from '../../forms/addTreeElementForm/AddTreeElementForm';
 import EditTreeElementForm from '../../forms/editTreeElementForm/EditTreeElementForm';
 import AddTreeFoldertForm from '../../forms/addTreeFolderForm/AddTreeFoldertForm';
 import ConfirmWindow from '../../confirmWindow/ConfirmWindow';
+
+import AddProjectFolderForm from '../../forms/addProjectFolderForm/AddProjectFolderForm';
 
 import { Tree } from 'primereact/tree';
 import { Button } from 'primereact/button';
@@ -56,6 +57,7 @@ const Home = () => {
   const db = getDatabase();
 
   const setDataToDatabase = (userId: any, data: any) => {
+    console.log(data)
     set(ref(db, 'users/' + userId), data);
   };
 
@@ -83,22 +85,15 @@ const Home = () => {
   const [nodeForAddFolder, setNodeForAddFolder] =
     useState<ProjectsDataTreeItemType | null>(null);
 
-  const saveProjectsData = (data: ProjectsDataListItemType[]) => {
-    dispatch(setProjectsData(data));
-    setDialogWindowStatus(false);
-  };
-
-  const formForAddData = [
+  const formAddProjectFolderData = [
     { inputName: 'projectName', labelName: 'Название проекта' },
-    { inputName: 'fullName', labelName: 'ФИО' },
-    { inputName: 'position', labelName: 'Должность' },
-    { inputName: 'phone', labelName: 'Номер телефона' },
   ];
 
   useEffect(() => {
+    setDataToDatabase(userId, formatDataToList(dataTree));
     // getDataFromDataBase();
-    setDataTree(formatDataToTree(projectsData));
-  }, [projectsData]);
+    // setDataTree(formatDataToTree(projectsData));
+  }, [dataTree]);
 
   useEffect(() => {
     if (auth.currentUser?.email) {
@@ -175,14 +170,25 @@ const Home = () => {
     );
   };
 
-  const sendDataToServer = () => {
-    setDataToDatabase(userId, formatDataToList(dataTree));
-  };
+  // const sendDataToServer = () => {
+  //   setDataToDatabase(userId, formatDataToList(dataTree));
+  // };
 
   const getDataFromServer = () => {
     getDataFromDataBase();
   };
 
+  const addProjectFolder = (folderData: any) => {
+    const newFolder = createTemplateFolder(
+      dataTree.length.toString(),
+      folderData.projectName,
+      dataFolderNames.projectName
+    );
+    setDataTree((previousTree) => [...previousTree, newFolder]);
+   
+    console.log(dataTree)
+    setDialogWindowStatus(false);
+  };
   return (
     <div className="main-container p-d-flex p-flex-row p-flex-nowrap p-jc-around">
       <div
@@ -241,17 +247,18 @@ const Home = () => {
           showDialog={() => setDialogWindowStatus(true)}
           hideDialog={() => setDialogWindowStatus(false)}
           displayBasic={dialogWindowStatus}
+          buttonName="Добавить новый проект"
         >
-          <AddTreeElementForm
-            data={formForAddData}
-            sendData={saveProjectsData}
+          <AddProjectFolderForm
+            data={formAddProjectFolderData}
+            sendData={addProjectFolder}
           />
         </DialogWindow>
-        <Button
+        {/* <Button
           label="отправить данные на сервер"
           onClick={sendDataToServer}
           className="p-mt-3"
-        />
+        /> */}
         <Button
           label="получить данные с сервера"
           onClick={getDataFromServer}
