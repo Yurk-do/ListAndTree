@@ -14,7 +14,11 @@ import { Button } from 'primereact/button';
 
 import TreeNode from 'primereact/treenode';
 
-import { formatDataToTree } from '../../../helpers/formatDataToTree';
+import { formatDataToList } from '../../../helpers/formatDataToList';
+import {
+  createTemplateFolder,
+  formatDataToTree,
+} from '../../../helpers/formatDataToTree';
 import { addFolder } from '../../../helpers/addFolder';
 import {
   findNodeForEdit,
@@ -52,19 +56,21 @@ const Home = () => {
   const db = getDatabase();
 
   const setDataToDatabase = (userId: any, data: any) => {
-    push(ref(db, 'users/' + userId), data);
+    set(ref(db, 'users/' + userId), data);
   };
 
   const getDataFromDataBase = () => {
     const snapshot = ref(db, 'users/' + userId);
     onValue(snapshot, (projectsData) => {
       const data = projectsData.val();
+      console.log(data);
     });
   };
 
   const projectsData = useSelector(
     (state: StateType) => state.data.projectsData
   );
+
   const dispatch = useDispatch();
 
   const [userEmail, setUserEmail] = useState('');
@@ -78,7 +84,6 @@ const Home = () => {
     useState<ProjectsDataTreeItemType | null>(null);
 
   const saveProjectsData = (data: ProjectsDataListItemType[]) => {
-    setDataToDatabase(userId, data);
     dispatch(setProjectsData(data));
     setDialogWindowStatus(false);
   };
@@ -91,7 +96,7 @@ const Home = () => {
   ];
 
   useEffect(() => {
-    getDataFromDataBase();
+    // getDataFromDataBase();
     setDataTree(formatDataToTree(projectsData));
   }, [projectsData]);
 
@@ -170,6 +175,14 @@ const Home = () => {
     );
   };
 
+  const sendDataToServer = () => {
+    setDataToDatabase(userId, formatDataToList(dataTree));
+  };
+
+  const getDataFromServer = () => {
+    getDataFromDataBase();
+  };
+
   return (
     <div className="main-container p-d-flex p-flex-row p-flex-nowrap p-jc-around">
       <div
@@ -234,6 +247,16 @@ const Home = () => {
             sendData={saveProjectsData}
           />
         </DialogWindow>
+        <Button
+          label="отправить данные на сервер"
+          onClick={sendDataToServer}
+          className="p-mt-3"
+        />
+        <Button
+          label="получить данные с сервера"
+          onClick={getDataFromServer}
+          className="p-mt-3"
+        />
       </div>
       <div className="edit-form-container">
         {dataForEdit && (

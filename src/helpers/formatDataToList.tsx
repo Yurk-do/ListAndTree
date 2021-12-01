@@ -1,48 +1,52 @@
+import { Tree } from 'primereact/tree';
 import {
   ProjectsDataListItemType,
   ProjectsDataTreeItemType,
+  NameAndPhoneFolderType,
 } from '../types/types';
 
-const dataFolderNames = {
-  projectName: 'Projects Folder',
-  position: 'Position Folder',
-  nameAndPhone: 'Names and phones data',
-};
+import { dataFolderNames } from './constants';
 
 export const formatDataToList = (
-  data: ProjectsDataTreeItemType[],
-  newListItem: any = null
-): ProjectsDataListItemType[] => {
-  if (!data.length) {
-    // @ts-ignore
-    return data;
+  tree: ProjectsDataTreeItemType[],
+  newListItem: any = null,
+  newList: any = null
+): any => {
+  if (!tree.length) {
+    return [];
   }
-  console.log('hello');
-  const listArray: any = [];
 
-  const listItem = newListItem
+  newList = newList ? newList : [];
+
+  newListItem = newListItem
     ? newListItem
     : {
         fullName: '',
         projectName: '',
         position: '',
         phone: '',
-        id: '',
       };
-  data.forEach((treeItem: ProjectsDataTreeItemType) => {
-    if (treeItem.data === dataFolderNames.projectName) {
-      listItem.projectName = treeItem.label;
-      formatDataToList(treeItem.children, listItem);
 
-      if (treeItem.data === dataFolderNames.position) {
-        listItem.position = treeItem.label;
-        formatDataToList(treeItem.children, listItem);
-      }
-      if (treeItem.data === dataFolderNames.nameAndPhone) {
-        listItem.projectName = treeItem.label;
-        listArray.push(listItem);
-      }
+  tree.forEach((treeItem: ProjectsDataTreeItemType) => {
+    switch (treeItem.data) {
+      case dataFolderNames.projectName:
+        newListItem.projectName = treeItem.label;
+        break;
+      case dataFolderNames.position:
+        newListItem.position = treeItem.label;
+        break;
+      case dataFolderNames.nameAndPhone:
+        newListItem.fullName = (treeItem.label as NameAndPhoneFolderType).name;
+        newListItem.phone = (treeItem.label as NameAndPhoneFolderType).phone;
+        newList.push({ ...newListItem });
+    }
+
+    if (treeItem.children.length) {
+      return (newList = [
+        ...formatDataToList(treeItem.children, newListItem, newList),
+      ]);
     }
   });
-  return listArray;
+
+  return newList;
 };
