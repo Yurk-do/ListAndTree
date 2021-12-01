@@ -59,7 +59,6 @@ const Home = () => {
     const snapshot = ref(db, 'users/' + userId);
     onValue(snapshot, (projectsData) => {
       const data = projectsData.val();
-      console.log(data);
     });
   };
 

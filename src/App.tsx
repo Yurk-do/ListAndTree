@@ -24,14 +24,16 @@ function App() {
     }
   });
 
-  console.log(isAuthUser);
-
   return (
     <div className="App">
       <Routes>
         <Route path="/" element={<AuthPage />} />
-        {isAuthUser && <Route path="home/:userId" element={<Home />} />}
-        <Route path="*" element={<Navigate replace to="/" />} />
+        {isAuthUser ? (
+          <Route path="home/:userId" element={<Home />} />
+        ) : (
+          <Route element={<Navigate replace to="/" />} />
+        )}
+        {/* <Route path="*" element={<Navigate replace to="/" />} /> */}
       </Routes>
     </div>
   );
