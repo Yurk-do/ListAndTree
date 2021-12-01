@@ -1,0 +1,30 @@
+.container-confirm-window {
+  padding: 20px;
+  padding-top: 10px;
+  width: 300px;
+  height: 150px;
+  background-color: rgb(177, 22, 22);
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  position: absolute;
+  top: 50px;
+  right: 100px;
+  z-index: 10;
+  border-radius: 10px;
+  .confirm-window-button-container {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 20px;
+
+    .button-confirm,
+    .button-cancel {
+      font-size: 18px;
+      font-weight: 600;
+      width: 100px;
+      height: 35px;
+      cursor: pointer;
+    }
+  }
+}

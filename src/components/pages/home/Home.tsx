@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setProjectsData } from '../../../redux/actionsCreater';
+import { useNavigate } from 'react-router-dom';
 
 import DialogWindow from '../../dialogWindow/DialogWindow';
 import AddTreeElementForm from '../../forms/addTreeElementForm/AddTreeElementForm';
 import EditTreeElementForm from '../../forms/editTreeElementForm/EditTreeElementForm';
 import AddTreeFoldertForm from '../../forms/addTreeFolderForm/AddTreeFoldertForm';
+import ConfirmWindow from '../../confirmWindow/ConfirmWindow';
 
 import { Tree } from 'primereact/tree';
 import { Button } from 'primereact/button';
@@ -28,6 +30,9 @@ import {
   StateType,
 } from '../../../types/types';
 
+import { getDatabase, ref, onValue, push, set } from 'firebase/database';
+import { getAuth } from 'firebase/auth';
+
 import './home.scss';
 
 const Home = () => {
@@ -36,11 +41,33 @@ const Home = () => {
     tree: 'tree',
   };
 
+  const auth = getAuth();
+
+  const [confirmWindowIsActive, setConfirmWindowIsActive] = useState(false);
+
+  const navigate = useNavigate();
+
+  const userId = getAuth().currentUser?.uid;
+
+  const db = getDatabase();
+
+  const setDataToDatabase = (userId: any, data: any) => {
+    push(ref(db, 'users/' + userId), data);
+  };
+
+  const getDataFromDataBase = () => {
+    const snapshot = ref(db, 'users/' + userId);
+    onValue(snapshot, (projectsData) => {
+      const data = projectsData.val();
+    });
+  };
+
   const projectsData = useSelector(
     (state: StateType) => state.data.projectsData
   );
   const dispatch = useDispatch();
 
+  const [userEmail, setUserEmail] = useState('');
   const [dataTree, setDataTree] = useState<ProjectsDataTreeItemType[]>([]);
   const [dataType, setDataType] = useState(dataTypes.list);
   const [dialogWindowStatus, setDialogWindowStatus] = useState(false);
@@ -51,6 +78,7 @@ const Home = () => {
     useState<ProjectsDataTreeItemType | null>(null);
 
   const saveProjectsData = (data: ProjectsDataListItemType[]) => {
+    setDataToDatabase(userId, data);
     dispatch(setProjectsData(data));
     setDialogWindowStatus(false);
   };
@@ -63,8 +91,15 @@ const Home = () => {
   ];
 
   useEffect(() => {
+    getDataFromDataBase();
     setDataTree(formatDataToTree(projectsData));
   }, [projectsData]);
+
+  useEffect(() => {
+    if (auth.currentUser?.email) {
+      setUserEmail(auth.currentUser?.email);
+    }
+  }, []);
 
   const editDataTree = (editedNode: ProjectsDataTreeItemType) => {
     const newTree = createEditedTree(dataTree, editedNode);
@@ -103,6 +138,12 @@ const Home = () => {
     setNodeForAddFolder(node);
   };
 
+  const loginOut = () => {
+    auth.signOut();
+    setConfirmWindowIsActive(false);
+    navigate('/');
+  };
+
   const nodeTemplate = (node: ProjectsDataTreeItemType) => {
     return (
       <div className="tree-node-container p-flex-row p-d-flex p-jc-between">
@@ -131,6 +172,19 @@ const Home = () => {
 
   return (
     <div className="main-container p-d-flex p-flex-row p-flex-nowrap p-jc-around">
+      <div
+        className="user-name-container"
+        onClick={() => setConfirmWindowIsActive(true)}
+      >
+        <span className="user-field-name">User:</span>
+        <span className="user-name">{userEmail}</span>
+      </div>
+      {confirmWindowIsActive && (
+        <ConfirmWindow
+          cancel={() => setConfirmWindowIsActive(false)}
+          confirm={loginOut}
+        />
+      )}
       <div className="information">
         <Button
           className="button-toggle p-mr-4"
