@@ -57,13 +57,7 @@ const AuthPage = () => {
   };
 
   const userCredentialHandler = (userCredential: any) => {
-    const userEmail = userCredential.user.email;
     const userId = userCredential.user.uid;
-
-    userEmail && localStorage.setItem('userEmail', userEmail);
-
-    userId && localStorage.setItem('userId', userId);
-
     navigate(`/home/${userId}`);
   };
 

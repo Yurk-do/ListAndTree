@@ -41,11 +41,11 @@ const Home = () => {
     tree: 'tree',
   };
 
+  const auth = getAuth();
+
   const [confirmWindowIsActive, setConfirmWindowIsActive] = useState(false);
 
   const navigate = useNavigate();
-
-  const [userEmail, setUserName] = useState('');
 
   const userId = getAuth().currentUser?.uid;
 
@@ -68,6 +68,7 @@ const Home = () => {
   );
   const dispatch = useDispatch();
 
+  const [userEmail, setUserEmail] = useState('');
   const [dataTree, setDataTree] = useState<ProjectsDataTreeItemType[]>([]);
   const [dataType, setDataType] = useState(dataTypes.list);
   const [dialogWindowStatus, setDialogWindowStatus] = useState(false);
@@ -96,9 +97,8 @@ const Home = () => {
   }, [projectsData]);
 
   useEffect(() => {
-    const userEmail = localStorage.getItem('userEmail');
-    if (userEmail) {
-      setUserName(userEmail);
+    if (auth.currentUser?.email) {
+      setUserEmail(auth.currentUser?.email);
     }
   }, []);
 
@@ -140,8 +140,7 @@ const Home = () => {
   };
 
   const loginOut = () => {
-    localStorage.removeItem('userId');
-    localStorage.removeItem('userEmail');
+    auth.signOut();
     setConfirmWindowIsActive(false);
     navigate('/');
   };
