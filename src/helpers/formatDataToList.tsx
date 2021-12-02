@@ -29,24 +29,25 @@ export const formatDataToList = (
     switch (treeItem.data) {
       case dataFolderNames.projectName:
         newListItem.projectName = treeItem.label;
+        if (!treeItem.data.length) {
+          newList.push({ ...newListItem });
+        }
         break;
       case dataFolderNames.position:
         newListItem.position = treeItem.label;
+        if (!treeItem.data.length) {
+          newList.push({ ...newListItem });
+        }
         break;
       case dataFolderNames.nameAndPhone:
         newListItem.fullName = (treeItem.label as NameAndPhoneFolderType).name;
         newListItem.phone = (treeItem.label as NameAndPhoneFolderType).phone;
     }
-
     if (treeItem.children.length) {
-      return (newList = [
-        ...formatDataToList(treeItem.children, newListItem, newList),
-      ]);
+      return formatDataToList(treeItem.children, { ...newListItem }, newList);
+    } else {
+      newList.push({ ...newListItem });
     }
-    console.log(newList)
-    console.log(newListItem)
-    newList.push({ ...newListItem });
-    console.log(newList)
   });
 
   return newList;
