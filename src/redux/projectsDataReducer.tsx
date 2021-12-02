@@ -11,7 +11,7 @@ export const projectsDataReducer = (
 ) => {
   switch (type) {
     case SET_PROJECTS_DATA:
-      return { ...state, projectsData: [...state.projectsData, payload] };
+      return { ...state, projectsData: payload };
     default:
       return state;
   }

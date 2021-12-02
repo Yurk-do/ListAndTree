@@ -29,12 +29,13 @@ export const createNameAndPhoneFolder = (
   key: string,
   nameAndPhone: NameAndPhoneFolderType,
   dataName: string
-): ProjectsDataTreeItemType => ({
+): ProjectsDataTreeItemType => {
+  return {
   key: key,
   label: nameAndPhone,
   data: dataName,
   children: [],
-});
+}};
 
 const createTreeElement: Function = (
   parentElement: ProjectsDataTreeItemType | any,
@@ -75,7 +76,7 @@ const createTreeElement: Function = (
 export const formatDataToTree = (
   data: ProjectsDataListItemType[]
 ): ProjectsDataTreeItemType[] => {
-  if (!data.length) {
+  if (!data) {
     return [];
   }
 

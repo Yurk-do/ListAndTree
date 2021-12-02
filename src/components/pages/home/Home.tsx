@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setProjectsData } from '../../../redux/actionsCreater';
+import { fetchProjectsData } from '../../../redux/actionsCreater';
 import { useNavigate } from 'react-router-dom';
 
 import DialogWindow from '../../dialogWindow/DialogWindow';
@@ -35,39 +35,19 @@ import {
   StateType,
 } from '../../../types/types';
 
-import { getDatabase, ref, onValue, push, set } from 'firebase/database';
-import { getAuth } from 'firebase/auth';
+import { sendDataToDatabase } from '../../../serviсes/db';
+
+import { auth } from '../../../serviсes/firebase';
 
 import './home.scss';
 
 const Home = () => {
-  const dataTypes = {
-    list: 'list',
-    tree: 'tree',
-  };
-
-  const auth = getAuth();
+  const currentUserId = auth.currentUser?.uid;
+  const currentUserEmail = auth.currentUser?.email;
 
   const [confirmWindowIsActive, setConfirmWindowIsActive] = useState(false);
 
   const navigate = useNavigate();
-
-  const userId = getAuth().currentUser?.uid;
-
-  const db = getDatabase();
-
-  const setDataToDatabase = (userId: any, data: any) => {
-    console.log(data)
-    set(ref(db, 'users/' + userId), data);
-  };
-
-  const getDataFromDataBase = () => {
-    const snapshot = ref(db, 'users/' + userId);
-    onValue(snapshot, (projectsData) => {
-      const data = projectsData.val();
-      console.log(data);
-    });
-  };
 
   const projectsData = useSelector(
     (state: StateType) => state.data.projectsData
@@ -75,9 +55,8 @@ const Home = () => {
 
   const dispatch = useDispatch();
 
-  const [userEmail, setUserEmail] = useState('');
+  const [userEmail, setUserEmail] = useState(currentUserEmail);
   const [dataTree, setDataTree] = useState<ProjectsDataTreeItemType[]>([]);
-  const [dataType, setDataType] = useState(dataTypes.list);
   const [dialogWindowStatus, setDialogWindowStatus] = useState(false);
   const [dataForEdit, setDataForEdit] =
     useState<ProjectsDataTreeItemType | null>(null);
@@ -90,21 +69,18 @@ const Home = () => {
   ];
 
   useEffect(() => {
-    setDataToDatabase(userId, formatDataToList(dataTree));
-    // getDataFromDataBase();
-    // setDataTree(formatDataToTree(projectsData));
-  }, [dataTree]);
-
-  useEffect(() => {
-    if (auth.currentUser?.email) {
-      setUserEmail(auth.currentUser?.email);
+    if (currentUserId) {
+      dispatch(fetchProjectsData(currentUserId));
+    }
+    if (userEmail) {
+      setUserEmail(userEmail);
     }
   }, []);
 
-  const editDataTree = (editedNode: ProjectsDataTreeItemType) => {
-    const newTree = createEditedTree(dataTree, editedNode);
-    setDataTree(newTree);
-  };
+  useEffect(() => {
+    console.log(projectsData);
+    setDataTree(formatDataToTree(projectsData));
+  }, [projectsData]);
 
   const selectNodeForEdit = (event: any) => {
     const editNode = findNodeForEdit(dataTree, event.node);
@@ -112,23 +88,38 @@ const Home = () => {
     setDataForEdit(editNode);
   };
 
+  const editDataTree = (editedNode: ProjectsDataTreeItemType) => {
+    const newTree = createEditedTree(dataTree, editedNode);
+    setDataTree(newTree);
+  };
+
   const deleteNodeHandler = (event: any, node: ProjectsDataTreeItemType) => {
     event.stopPropagation();
     switch (node.data) {
       case dataFolderNames.projectName:
-        setDataTree(
-          dataTree.filter(
-            (itemTree: ProjectsDataTreeItemType) => itemTree.key !== node.key
+        sendDataToDatabase(
+          currentUserId,
+          formatDataToList(
+            dataTree.filter(
+              (itemTree: ProjectsDataTreeItemType) => itemTree.key !== node.key
+            )
           )
         );
         break;
       case dataFolderNames.position:
-        setDataTree(deleteFolder(dataTree, node, node.key[0]));
+        sendDataToDatabase(
+          currentUserId,
+          formatDataToList(deleteFolder(dataTree, node, node.key[0]))
+        );
         break;
-      case dataFolderNames.nameAndPhone:
-        setDataTree(deleteFolder(dataTree, node, node.key.slice(0, 3)));
+      case dataFolderNames.position:
+        sendDataToDatabase(
+          currentUserId,
+          formatDataToList(deleteFolder(dataTree, node, node.key.slice(0, 3)))
+        );
         break;
     }
+
     setDataForEdit(null);
   };
 
@@ -142,6 +133,21 @@ const Home = () => {
     auth.signOut();
     setConfirmWindowIsActive(false);
     navigate('/');
+  };
+
+  const addProjectFolder = (folderData: any) => {
+    const newFolder = createTemplateFolder(
+      dataTree.length.toString(),
+      folderData.projectName,
+      dataFolderNames.projectName
+    );
+
+    sendDataToDatabase(
+      currentUserId,
+      formatDataToList([...dataTree, newFolder])
+    );
+
+    setDialogWindowStatus(false);
   };
 
   const nodeTemplate = (node: ProjectsDataTreeItemType) => {
@@ -170,25 +176,6 @@ const Home = () => {
     );
   };
 
-  // const sendDataToServer = () => {
-  //   setDataToDatabase(userId, formatDataToList(dataTree));
-  // };
-
-  const getDataFromServer = () => {
-    getDataFromDataBase();
-  };
-
-  const addProjectFolder = (folderData: any) => {
-    const newFolder = createTemplateFolder(
-      dataTree.length.toString(),
-      folderData.projectName,
-      dataFolderNames.projectName
-    );
-    setDataTree((previousTree) => [...previousTree, newFolder]);
-   
-    console.log(dataTree)
-    setDialogWindowStatus(false);
-  };
   return (
     <div className="main-container p-d-flex p-flex-row p-flex-nowrap p-jc-around">
       <div
@@ -205,25 +192,12 @@ const Home = () => {
         />
       )}
       <div className="information">
-        <Button
-          className="button-toggle p-mr-4"
-          name={dataTypes.list}
-          label={dataTypes.list}
-          onClick={(event) => setDataType(event.currentTarget.name)}
-        />
-        <Button
-          className="button-toggle"
-          name={dataTypes.tree}
-          label={dataTypes.tree}
-          onClick={(event) => setDataType(event.currentTarget.name)}
-        />
         <div className="content">
-          {!dataTree.length && (
+          {!dataTree.length ? (
             <div className="message-no-data">
               <p>Данные для отображения отсутствуют</p>
             </div>
-          )}
-          {dataType === dataTypes.tree && (
+          ) : (
             <Tree
               value={createTreeForRender(dataTree) as TreeNode[]}
               nodeTemplate={nodeTemplate}
@@ -231,16 +205,6 @@ const Home = () => {
               selectionMode="single"
               onSelect={selectNodeForEdit}
             />
-          )}
-          {dataType === dataTypes.list && (
-            <ol className="list">
-              {projectsData.map((item: ProjectsDataListItemType, index) => (
-                <li className="list-item" key={index}>
-                  Имя сотрудника: {item.fullName}. Должность: {item.position}.
-                  Название проекта: "{item.projectName}". Телефон: {item.phone}
-                </li>
-              ))}
-            </ol>
           )}
         </div>
         <DialogWindow
@@ -254,22 +218,15 @@ const Home = () => {
             sendData={addProjectFolder}
           />
         </DialogWindow>
-        {/* <Button
-          label="отправить данные на сервер"
-          onClick={sendDataToServer}
-          className="p-mt-3"
-        /> */}
-        <Button
-          label="получить данные с сервера"
-          onClick={getDataFromServer}
-          className="p-mt-3"
-        />
       </div>
       <div className="edit-form-container">
         {dataForEdit && (
           <EditTreeElementForm
             data={dataForEdit}
-            sendEditedData={editDataTree}
+            editingData={editDataTree}
+            sendEditedData={() => {
+              sendDataToDatabase(currentUserId, formatDataToList(dataTree));
+            }}
           />
         )}
         {nodeForAddFolder && (

@@ -1,29 +1,22 @@
-import {
-  ProjectsDataActionType,
-  ProjectsDataListItemType,
-  AuthActionType,
-} from '../types/types';
-import { SET_PROJECTS_DATA, LOGIN_IN, LOGIN_OUT } from './actionTypes';
+import { StateType } from '../types/types';
+import { SET_PROJECTS_DATA } from './actionTypes';
 
-export function setProjectsData(
-  data: ProjectsDataListItemType[]
-): ProjectsDataActionType {
-  return {
-    type: SET_PROJECTS_DATA,
-    payload: data,
-  };
-}
+import { getDataFromDataBase } from '../serviсes/db';
 
-export function loginIn(userName: string): AuthActionType {
-  return {
-    type: LOGIN_IN,
-    payload: userName,
-  };
-}
+import { ThunkAction } from 'redux-thunk';
+import { AnyAction } from 'redux';
 
-export function loginOut(userName: string): AuthActionType {
-  return {
-    type: LOGIN_OUT,
-    payload: userName,
+export function fetchProjectsData(
+  userId: string
+): ThunkAction<void, StateType, unknown, AnyAction> {
+  return async (dispatch) => {
+    try {
+      getDataFromDataBase(userId, dispatch, {
+        type: SET_PROJECTS_DATA,
+        payload: [],
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 }

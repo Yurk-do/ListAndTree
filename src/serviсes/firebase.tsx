@@ -1,3 +1,7 @@
+import { initializeApp } from 'firebase/app';
+import { getDatabase } from 'firebase/database';
+import { getAuth } from 'firebase/auth';
+
 export const firebaseConfig = {
   apiKey: 'AIzaSyCoElE9vn8GKOi9I-6zRbA1MI0n6IpJ2mo',
   authDomain: 'listandtree.firebaseapp.com',
@@ -8,3 +12,8 @@ export const firebaseConfig = {
   messagingSenderId: '193570890135',
   appId: '1:193570890135:web:088e6e7a435fbdf59e24d2',
 };
+
+const app = initializeApp(firebaseConfig);
+
+export const db = getDatabase();
+export const auth = getAuth();

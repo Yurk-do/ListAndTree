@@ -9,11 +9,9 @@ import 'primeicons/primeicons.css';
 
 import './App.scss';
 
-import { getAuth } from 'firebase/auth';
+import { auth } from './serviсes/firebase';
 
 function App() {
-  const auth = getAuth();
-
   const [isAuthUser, setIsAuthUser] = useState<any>(null);
 
   auth.onAuthStateChanged((authUser) => {

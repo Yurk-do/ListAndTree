@@ -1,6 +1,4 @@
-import { Tree } from 'primereact/tree';
 import {
-  ProjectsDataListItemType,
   ProjectsDataTreeItemType,
   NameAndPhoneFolderType,
 } from '../types/types';
@@ -38,7 +36,6 @@ export const formatDataToList = (
       case dataFolderNames.nameAndPhone:
         newListItem.fullName = (treeItem.label as NameAndPhoneFolderType).name;
         newListItem.phone = (treeItem.label as NameAndPhoneFolderType).phone;
-        newList.push({ ...newListItem });
     }
 
     if (treeItem.children.length) {
@@ -46,6 +43,10 @@ export const formatDataToList = (
         ...formatDataToList(treeItem.children, newListItem, newList),
       ]);
     }
+    console.log(newList)
+    console.log(newListItem)
+    newList.push({ ...newListItem });
+    console.log(newList)
   });
 
   return newList;

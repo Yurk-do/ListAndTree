@@ -11,10 +11,11 @@ import './editTreeElementForm.scss';
 
 interface FormPropsType {
   data: ProjectsDataTreeItemType;
+  editingData: (data: ProjectsDataTreeItemType) => void;
   sendEditedData: (data: ProjectsDataTreeItemType) => void;
 }
 
-const EditTreeElementForm: FC<FormPropsType> = ({ data, sendEditedData }) => {
+const EditTreeElementForm: FC<FormPropsType> = ({ data, editingData, sendEditedData }) => {
   const [editData, setEditData] = useState(data);
 
   const changeInputData = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +39,7 @@ const EditTreeElementForm: FC<FormPropsType> = ({ data, sendEditedData }) => {
   };
 
   useEffect(() => {
-    sendEditedData(editData);
+    editingData(editData);
     setEditData(data);
   }, [data, editData]);
 
