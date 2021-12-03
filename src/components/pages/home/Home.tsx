@@ -78,7 +78,6 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    console.log(projectsData);
     setDataTree(formatDataToTree(projectsData));
   }, [projectsData]);
 
@@ -112,7 +111,7 @@ const Home = () => {
           formatDataToList(deleteFolder(dataTree, node, node.key[0]))
         );
         break;
-      case dataFolderNames.position:
+      case dataFolderNames.nameAndPhone:
         sendDataToDatabase(
           currentUserId,
           formatDataToList(deleteFolder(dataTree, node, node.key.slice(0, 3)))
@@ -233,7 +232,12 @@ const Home = () => {
           <AddTreeFoldertForm
             node={nodeForAddFolder}
             sendAddedFolder={(addedFolder) =>
-              setDataTree(addFolder(dataTree, nodeForAddFolder, addedFolder))
+              sendDataToDatabase(
+                currentUserId,
+                formatDataToList(
+                  addFolder(dataTree, nodeForAddFolder, addedFolder)
+                )
+              )
             }
           />
         )}

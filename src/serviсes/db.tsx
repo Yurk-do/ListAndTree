@@ -3,7 +3,6 @@ import { db } from './firebase';
 import { ref, onValue, push, set } from 'firebase/database';
 
 export const sendDataToDatabase = (userId: any, data: any) => {
-  console.log(data);
   set(ref(db, 'users/' + userId), data);
 };
 
