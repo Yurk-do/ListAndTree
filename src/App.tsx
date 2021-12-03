@@ -13,6 +13,7 @@ import { auth } from './serviсes/firebase';
 
 function App() {
   const [isAuthUser, setIsAuthUser] = useState<any>(null);
+  
 
   auth.onAuthStateChanged((authUser) => {
     if (authUser) {
@@ -29,7 +30,7 @@ function App() {
         {isAuthUser ? (
           <Route path="home/:userId" element={<Home />} />
         ) : (
-          <Route element={<Navigate replace to="/" />} />
+          <Route path="*" element={<Navigate replace to="/" />} />
         )}
         {/* <Route path="*" element={<Navigate replace to="/" />} /> */}
       </Routes>

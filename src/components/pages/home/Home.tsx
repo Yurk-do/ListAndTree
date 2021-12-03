@@ -29,11 +29,7 @@ import {
 import { dataFolderNames } from '../../../helpers/constants';
 import { deleteFolder } from '../../../helpers/deleteFolder';
 
-import {
-  ProjectsDataListItemType,
-  ProjectsDataTreeItemType,
-  StateType,
-} from '../../../types/types';
+import { ProjectsDataTreeItemType, StateType } from '../../../types/types';
 
 import { sendDataToDatabase } from '../../../serviсes/db';
 
@@ -149,6 +145,11 @@ const Home = () => {
     setDialogWindowStatus(false);
   };
 
+  const saveEditedData = () => {
+    sendDataToDatabase(currentUserId, formatDataToList(dataTree));
+    setDataForEdit(null);
+  };
+
   const nodeTemplate = (node: ProjectsDataTreeItemType) => {
     return (
       <div className="tree-node-container p-flex-row p-d-flex p-jc-between">
@@ -223,9 +224,7 @@ const Home = () => {
           <EditTreeElementForm
             data={dataForEdit}
             editingData={editDataTree}
-            sendEditedData={() => {
-              sendDataToDatabase(currentUserId, formatDataToList(dataTree));
-            }}
+            sendEditedData={saveEditedData}
           />
         )}
         {nodeForAddFolder && (
