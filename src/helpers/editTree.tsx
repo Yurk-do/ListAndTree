@@ -15,11 +15,12 @@ export const createTreeForRender = (
         itemTree.label.phone
       );
     }
-    if (itemTree.children.length) {
+    if (itemTree.children && itemTree.children.length) {
       newItemTree.children = createTreeForRender(itemTree.children);
     }
     return newItemTree;
   });
+
   return newTree;
 };
 

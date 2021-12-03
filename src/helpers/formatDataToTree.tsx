@@ -31,11 +31,12 @@ export const createNameAndPhoneFolder = (
   dataName: string
 ): ProjectsDataTreeItemType => {
   return {
-  key: key,
-  label: nameAndPhone,
-  data: dataName,
-  children: [],
-}};
+    key: key,
+    label: nameAndPhone,
+    data: dataName,
+    children: [],
+  };
+};
 
 const createTreeElement: Function = (
   parentElement: ProjectsDataTreeItemType | any,
@@ -45,7 +46,6 @@ const createTreeElement: Function = (
   const key = !parentElement.data
     ? parentElement.length.toString()
     : parentElement.key + '-' + parentElement.children.length;
-
   switch (parentElement.data) {
     case undefined:
       folder = createTemplateFolder(
@@ -55,6 +55,9 @@ const createTreeElement: Function = (
       );
       break;
     case dataFolderNames.projectName:
+      if (!item.position) {
+        return;
+      }
       folder = createTemplateFolder(
         key,
         item.position,
@@ -62,14 +65,19 @@ const createTreeElement: Function = (
       );
       break;
     case dataFolderNames.position:
-      return (folder = createNameAndPhoneFolder(
+      if (!item.fullName) {
+        return;
+      }
+      folder = createNameAndPhoneFolder(
         key,
         { name: item.fullName, phone: item.phone },
         dataFolderNames.nameAndPhone
-      ));
+      );
   }
 
-  folder.children.push(createTreeElement(folder, item));
+  if (folder?.children && createTreeElement(folder, item)) {
+    folder.children.push(createTreeElement(folder, item));
+  }
   return folder;
 };
 
@@ -95,6 +103,9 @@ export const formatDataToTree = (
         dataItem.position
       );
       if (!itemIsSamePosition) {
+        if (!dataItem.position) {
+          return;
+        }
         itemIsSameProject.children.push(
           createTreeElement(itemIsSameProject, dataItem)
         );
@@ -105,5 +116,6 @@ export const formatDataToTree = (
       }
     }
   });
+
   return newDataArray;
 };
