@@ -7,7 +7,7 @@ import './dialogWindow.scss';
 import 'primeflex/primeflex.scss';
 
 type DialogWindowPropsType = {
-  children: ReactNode;
+  children: any;
   showDialog: () => void;
   hideDialog: () => void;
   displayBasic: boolean;
@@ -24,14 +24,15 @@ const DialogWindow: FC<DialogWindowPropsType> = ({
   return (
     <div>
       <Button
+        className="p-m-4"
         label={buttonName}
         icon="pi pi-external-link"
         onClick={showDialog}
       />
       <Dialog
-        className="dialog-window p-fluid p-formgrid p-grid"
+        // className="dialog-window p-fluid p-formgrid p-grid"
         visible={displayBasic}
-        style={{ width: '50vw' }}
+        style={{ width: '100vw' }}
         onHide={hideDialog}
         resizable
       >

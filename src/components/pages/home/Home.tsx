@@ -37,7 +37,17 @@ import { auth } from '../../../serviсes/firebase';
 
 import './home.scss';
 
+import DeckMap from '../../maps/DeckMap';
+import PigeonMap from '../../maps/PigeonMap';
+import MyLeafletMap from '../../maps/MyLeafletMap';
+
 const Home = () => {
+  const [mapDeckIsActive, setMapDeckIsActive] = useState(false);
+  const [mapPigeonIsActive, setMapPigeonIsActive] = useState(false);
+  const [mapLeafletIsActive, setMapLeafletIsActive] = useState(false);
+
+  console.log(mapDeckIsActive);
+
   const currentUserId = auth.currentUser?.uid;
   const currentUserEmail = auth.currentUser?.email;
 
@@ -178,6 +188,21 @@ const Home = () => {
 
   return (
     <div className="main-container p-d-flex p-flex-row p-flex-nowrap p-jc-around">
+      {mapDeckIsActive && (
+        <div className="map-container">
+          <DeckMap />
+        </div>
+      )}
+      {mapPigeonIsActive && (
+        <div className="map-container">
+          <PigeonMap />
+        </div>
+      )}
+      {mapLeafletIsActive && (
+        <div className="map-container">
+          <MyLeafletMap />
+        </div>
+      )}
       <div
         className="user-name-container"
         onClick={() => setConfirmWindowIsActive(true)}
@@ -191,6 +216,7 @@ const Home = () => {
           confirm={loginOut}
         />
       )}
+
       <div className="information">
         <div className="content">
           {!dataTree.length ? (
@@ -218,6 +244,19 @@ const Home = () => {
             sendData={addProjectFolder}
           />
         </DialogWindow>
+        <Button
+          className="p-mr-3"
+          label="Открыть карту DECK"
+          onClick={() => setMapDeckIsActive(!mapDeckIsActive)}
+        />
+        <Button
+          label="Открыть карту Pigeon"
+          onClick={() => setMapPigeonIsActive(!mapPigeonIsActive)}
+        />
+        <Button
+          label="Открыть карту Leaflet"
+          onClick={() => setMapLeafletIsActive(!mapLeafletIsActive)}
+        />
       </div>
       <div className="edit-form-container">
         {dataForEdit && (

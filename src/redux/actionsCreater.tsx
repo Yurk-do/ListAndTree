@@ -1,5 +1,5 @@
 import { StateType } from '../types/types';
-import { SET_PROJECTS_DATA } from './actionTypes';
+import { SET_PROJECTS_DATA, LOGIN_IN } from './actionTypes';
 
 import { getDataFromDataBase } from '../serviсes/db';
 
@@ -18,5 +18,15 @@ export function fetchProjectsData(
     } catch (error) {
       console.log(error);
     }
+  };
+}
+
+export function loginIn(userEmail: string, userId: string): any {
+  return {
+    type: LOGIN_IN,
+    payload: {
+      userEmail,
+      userId,
+    },
   };
 }

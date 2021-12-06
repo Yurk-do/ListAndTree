@@ -64,6 +64,7 @@ const AuthPage = () => {
   const loginIn = (authFormData: AuthFormData) => {
     signInWithEmailAndPassword(auth, authFormData.email, authFormData.password)
       .then((userCredential) => userCredentialHandler(userCredential))
+
       .catch((error) => errorHandler(error));
   };
 
