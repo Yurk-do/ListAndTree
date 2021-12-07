@@ -40,13 +40,20 @@ import './home.scss';
 import DeckMap from '../../maps/DeckMap';
 import PigeonMap from '../../maps/PigeonMap';
 import MyLeafletMap from '../../maps/MyLeafletMap';
+import SimpleMap from '../../maps/SimpleMap';
+import MyGoogleMap from '../../maps/MyGoogleMap';
 
 const Home = () => {
+  const mapStatusButton = {
+    close: 'Закрыть',
+    open: 'Открыть',
+  };
+
   const [mapDeckIsActive, setMapDeckIsActive] = useState(false);
   const [mapPigeonIsActive, setMapPigeonIsActive] = useState(false);
   const [mapLeafletIsActive, setMapLeafletIsActive] = useState(false);
-
-  console.log(mapDeckIsActive);
+  const [mapSimpleIsActive, setMapSimpleIsActive] = useState(false);
+  const [mapGoogleIsActive, setMapGoogleIsActive] = useState(false);
 
   const currentUserId = auth.currentUser?.uid;
   const currentUserEmail = auth.currentUser?.email;
@@ -203,6 +210,16 @@ const Home = () => {
           <MyLeafletMap />
         </div>
       )}
+      {mapSimpleIsActive && (
+        <div className="map-container">
+          <SimpleMap />
+        </div>
+      )}
+      {mapGoogleIsActive && (
+        <div className="map-container">
+          <MyGoogleMap />
+        </div>
+      )}
       <div
         className="user-name-container"
         onClick={() => setConfirmWindowIsActive(true)}
@@ -246,16 +263,38 @@ const Home = () => {
         </DialogWindow>
         <Button
           className="p-mr-3"
-          label="Открыть карту DECK"
+          label={`${
+            mapDeckIsActive ? mapStatusButton.close : mapStatusButton.open
+          } карту Deck`}
           onClick={() => setMapDeckIsActive(!mapDeckIsActive)}
         />
         <Button
-          label="Открыть карту Pigeon"
+          className="p-mr-3"
+          label={`${
+            mapPigeonIsActive ? mapStatusButton.close : mapStatusButton.open
+          } карту Pigeon`}
           onClick={() => setMapPigeonIsActive(!mapPigeonIsActive)}
         />
         <Button
-          label="Открыть карту Leaflet"
+          className="p-mr-3"
+          label={`${
+            mapLeafletIsActive ? mapStatusButton.close : mapStatusButton.open
+          } карту Leaflet`}
           onClick={() => setMapLeafletIsActive(!mapLeafletIsActive)}
+        />
+        <Button
+          className="p-mr-3 p-mt-3"
+          label={`${
+            mapSimpleIsActive ? mapStatusButton.close : mapStatusButton.open
+          } карту SimpleMap`}
+          onClick={() => setMapSimpleIsActive(!mapSimpleIsActive)}
+        />
+        <Button
+          className="p-mt-3"
+          label={`${
+            mapGoogleIsActive ? mapStatusButton.close : mapStatusButton.open
+          } карту GoogleMap`}
+          onClick={() => setMapGoogleIsActive(!mapGoogleIsActive)}
         />
       </div>
       <div className="edit-form-container">

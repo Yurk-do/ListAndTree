@@ -1,15 +1,12 @@
-// @ts-ignore
 import DeckGL from '@deck.gl/react';
-// @ts-ignore
-import { LineLayer } from '@deck.gl/layers';
+import { ColumnLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { StaticMap } from 'react-map-gl';
-// @ts-ignore
-import { MapView } from '@deck.gl/core';
 
-// @ts-ignore
-import { Deck } from '@deck.gl/core';
-// @ts-ignore
-import { ScatterplotLayer } from '@deck.gl/layers';
+type SourseDataType = {
+  coordinates: [number, number];
+  name: string;
+  address: string;
+};
 
 const INITIAL_VIEW_STATE = {
   longitude: -122.41669,
@@ -19,38 +16,49 @@ const INITIAL_VIEW_STATE = {
   bearing: 0,
 };
 
-const data = [
-  {
-    sourcePosition: [-122.41669, 37.7853],
-    targetPosition: [-122.41669, 37.781],
-  },
+const MAPBOX_ACCESS_TOKEN =
+  'pk.eyJ1IjoieXVyay1kbyIsImEiOiJja3d3MGplNnIxbzc5Mm9sc3p6NzBqNGt3In0.yg6L2Ay-ddmdnZ-5GsYzLQ';
+
+const sourceData: SourseDataType[] = [
+  { coordinates: [60.006, 38.7128], name: 'marker1', address: 'green street' },
+  { coordinates: [74.008, 40.713], name: 'marker2', address: 'red street' },
+  { coordinates: [84.008, 45.713], name: 'marker3', address: 'blue street' },
+  { coordinates: [40.006, 38.7128], name: 'marker4', address: 'black street' },
+  { coordinates: [56.008, 40.713], name: 'marker5', address: 'yellow street' },
+  { coordinates: [35.008, 45.713], name: 'marker6', address: 'white street' },
 ];
 
-const deck = new Deck({
-  initialViewState: {
-    longitude: -122.45,
-    latitude: 37.78,
-    zoom: 12,
-  },
-  controller: true,
-  layers: [new ScatterplotLayer({ data })],
-});
-
 const DeckMap = () => {
-  const MAPBOX_ACCESS_TOKEN =
-    'pk.eyJ1IjoieXVyay1kbyIsImEiOiJja3d1cDlzbnkxczM3MnFxb3R4cXE3MG96In0.9DnDT6EVhQMjbesE_AYfRQ';
-  const layers = [new LineLayer({ id: 'line-layer', data })];
+  const scatterplot = () =>
+    new ScatterplotLayer({
+      id: 'scatterplot-layer',
+      data: sourceData,
+      opacity: 0.8,
+      filled: true,
+      radiusMinPixels: 2,
+      radiusMaxPixels: 5,
+      getPosition: (d: any) => d.coordinates,
+      getFillColor: (d: any) =>
+        d.n_killed > 0 ? [200, 0, 40, 150] : [255, 140, 0, 100],
+    });
 
   return (
     <DeckGL
       initialViewState={INITIAL_VIEW_STATE}
       controller={true}
-      layers={layers}
+      layers={scatterplot}
+      getTooltip={({ object }: any) =>
+        object && `${object.name}\n${object.address}`
+      }
     >
-      <MapView id="map" controller={true}>
-        <StaticMap mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN} />
-      </MapView>
-      <StaticMap mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN} />
+      <StaticMap
+        width="500px"
+        height="400px"
+        latitude={37.78}
+        longitude={-122.45}
+        zoom={8}
+        mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
+      />
     </DeckGL>
   );
 };

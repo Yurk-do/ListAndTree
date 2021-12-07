@@ -1,31 +1,45 @@
-import React from 'react';
-import GoogleMapReact from 'google-map-react';
+import {
+  ComposableMap,
+  Geographies,
+  Geography,
+  Marker,
+  ZoomableGroup,
+} from 'react-simple-maps';
 
-const AnyReactComponent = ({ text }: any) => <div>{text}</div>;
+const data = [
+  [60.006, 38.7128],
+  [74.008, 40.713],
+  [84.008, 45.713],
+  [40.006, 38.7128],
+  [56.008, 40.713],
+  [35.008, 45.713],
+];
+
+const geoUrl =
+  'https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json';
 
 const SimpleMap = () => {
-  const options = {
-    center: {
-      lat: 59.95,
-      lng: 30.33,
-    },
-    zoom: 11,
-  };
-
   return (
-    <div style={{ height: '100vh', width: '100%' }}>
-      <GoogleMapReact
-        bootstrapURLKeys={{ key: '1' }}
-        defaultCenter={options.center}
-        defaultZoom={options.zoom}
-      >
-        <AnyReactComponent>
-          lat={59.955413}
-          lng={30.337844}
-          text="My Marker"
-        </AnyReactComponent>
-      </GoogleMapReact>
-    </div>
+    <ComposableMap>
+      <ZoomableGroup zoom={1}>
+        <Geographies geography={geoUrl}>
+          {({ geographies }) =>
+            geographies.map((geo) => (
+              <Geography key={geo.rsmKey} geography={geo} />
+            ))
+          }
+        </Geographies>
+        {data.map((coordinat: any) => (
+          <Marker coordinates={coordinat}>
+            <circle r={3} fill="#F53" />
+          </Marker>
+        ))}
+
+        {/* <Marker coordinates={[-74.006, 40.7128]}>
+          <circle r={8} fill="#F53" />
+        </Marker> */}
+      </ZoomableGroup>
+    </ComposableMap>
   );
 };
 
