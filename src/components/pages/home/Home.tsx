@@ -37,7 +37,8 @@ import { auth } from '../../../serviсes/firebase';
 
 import './home.scss';
 
-import DeckMap from '../../maps/DeckMap';
+import DeckMapScatterPlot from '../../maps/DeckMapScatterplot';
+import DeckMapGrid from '../../maps/DeckMapGrid';
 import PigeonMap from '../../maps/PigeonMap';
 import MyLeafletMap from '../../maps/MyLeafletMap';
 import SimpleMap from '../../maps/SimpleMap';
@@ -49,7 +50,9 @@ const Home = () => {
     open: 'Открыть',
   };
 
-  const [mapDeckIsActive, setMapDeckIsActive] = useState(false);
+  const [mapDeckScatterPlotIsActive, setMapDeckScatterPlotIsActive] =
+    useState(false);
+  const [mapDeckGridIsActive, setMapDeckGridIsActive] = useState(false);
   const [mapPigeonIsActive, setMapPigeonIsActive] = useState(false);
   const [mapLeafletIsActive, setMapLeafletIsActive] = useState(false);
   const [mapSimpleIsActive, setMapSimpleIsActive] = useState(false);
@@ -195,9 +198,14 @@ const Home = () => {
 
   return (
     <div className="main-container p-d-flex p-flex-row p-flex-nowrap p-jc-around">
-      {mapDeckIsActive && (
+      {mapDeckScatterPlotIsActive && (
         <div className="map-container">
-          <DeckMap />
+          <DeckMapScatterPlot />
+        </div>
+      )}
+      {mapDeckGridIsActive && (
+        <div className="map-container">
+          <DeckMapGrid />
         </div>
       )}
       {mapPigeonIsActive && (
@@ -264,9 +272,20 @@ const Home = () => {
         <Button
           className="p-mr-3"
           label={`${
-            mapDeckIsActive ? mapStatusButton.close : mapStatusButton.open
-          } карту Deck`}
-          onClick={() => setMapDeckIsActive(!mapDeckIsActive)}
+            mapDeckScatterPlotIsActive
+              ? mapStatusButton.close
+              : mapStatusButton.open
+          } карту Deck ScatterPlot`}
+          onClick={() =>
+            setMapDeckScatterPlotIsActive(!mapDeckScatterPlotIsActive)
+          }
+        />
+        <Button
+          className="p-mr-3"
+          label={`${
+            mapDeckGridIsActive ? mapStatusButton.close : mapStatusButton.open
+          } карту Deck Grid`}
+          onClick={() => setMapDeckGridIsActive(!mapDeckGridIsActive)}
         />
         <Button
           className="p-mr-3"
