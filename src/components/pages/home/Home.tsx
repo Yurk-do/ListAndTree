@@ -44,19 +44,35 @@ import MyLeafletMap from '../../maps/MyLeafletMap';
 import SimpleMap from '../../maps/SimpleMap';
 import MyGoogleMap from '../../maps/MyGoogleMap';
 
+import SproutVideo from '../../video/SproutVideo';
+import HippoVideo from '../../video/HippoVideo';
+
 const Home = () => {
   const mapStatusButton = {
     close: 'Закрыть',
     open: 'Открыть',
   };
 
-  const [mapDeckScatterPlotIsActive, setMapDeckScatterPlotIsActive] =
-    useState(false);
-  const [mapDeckGridIsActive, setMapDeckGridIsActive] = useState(false);
-  const [mapPigeonIsActive, setMapPigeonIsActive] = useState(false);
-  const [mapLeafletIsActive, setMapLeafletIsActive] = useState(false);
-  const [mapSimpleIsActive, setMapSimpleIsActive] = useState(false);
-  const [mapGoogleIsActive, setMapGoogleIsActive] = useState(false);
+  const mapsNames = {
+    deckGrid: 'deck-grid',
+    deckScatter: 'deck-scatter',
+    pigeon: 'pigeon',
+    leaflet: 'leaflet',
+    simple: 'simple',
+    google: 'google',
+  };
+
+  const [mapsStatuses, setMapStatuses] = useState({
+    [mapsNames.deckGrid]: false,
+    [mapsNames.deckScatter]: false,
+    [mapsNames.pigeon]: false,
+    [mapsNames.leaflet]: false,
+    [mapsNames.simple]: false,
+    [mapsNames.google]: false,
+  });
+
+  const [videoWindowSproutVideo, setWindowSproutVideo] = useState(false);
+  const [videoWindowHippoVideo, setWindowHippoVideo] = useState(false);
 
   const currentUserId = auth.currentUser?.uid;
   const currentUserEmail = auth.currentUser?.email;
@@ -170,6 +186,13 @@ const Home = () => {
     setDataForEdit(null);
   };
 
+  const changeMapStatus = (event: any) => {
+    setMapStatuses({
+      ...mapsStatuses,
+      [event.currentTarget.name]: !mapsStatuses[event.currentTarget.name],
+    });
+  };
+
   const nodeTemplate = (node: ProjectsDataTreeItemType) => {
     return (
       <div className="tree-node-container p-flex-row p-d-flex p-jc-between">
@@ -198,34 +221,44 @@ const Home = () => {
 
   return (
     <div className="main-container p-d-flex p-flex-row p-flex-nowrap p-jc-around">
-      {mapDeckScatterPlotIsActive && (
+      {mapsStatuses[mapsNames.deckGrid] && (
         <div className="map-container">
           <DeckMapScatterPlot />
         </div>
       )}
-      {mapDeckGridIsActive && (
+      {mapsStatuses[mapsNames.deckScatter] && (
         <div className="map-container">
           <DeckMapGrid />
         </div>
       )}
-      {mapPigeonIsActive && (
+      {mapsStatuses.pigeon && (
         <div className="map-container">
           <PigeonMap />
         </div>
       )}
-      {mapLeafletIsActive && (
+      {mapsStatuses.leaflet && (
         <div className="map-container">
           <MyLeafletMap />
         </div>
       )}
-      {mapSimpleIsActive && (
+      {mapsStatuses.simple && (
         <div className="map-container">
           <SimpleMap />
         </div>
       )}
-      {mapGoogleIsActive && (
+      {mapsStatuses.google && (
         <div className="map-container">
           <MyGoogleMap />
+        </div>
+      )}
+      {videoWindowSproutVideo && (
+        <div className="video-container">
+          <SproutVideo />
+        </div>
+      )}
+      {videoWindowHippoVideo && (
+        <div className="video-container">
+          <HippoVideo />
         </div>
       )}
       <div
@@ -270,50 +303,66 @@ const Home = () => {
           />
         </DialogWindow>
         <Button
-          className="p-mr-3"
+          name={mapsNames.deckGrid}
+          className="p-m-3"
           label={`${
-            mapDeckScatterPlotIsActive
+            mapsStatuses[mapsNames.deckGrid]
               ? mapStatusButton.close
               : mapStatusButton.open
           } карту Deck ScatterPlot`}
-          onClick={() =>
-            setMapDeckScatterPlotIsActive(!mapDeckScatterPlotIsActive)
-          }
+          onClick={changeMapStatus}
         />
         <Button
-          className="p-mr-3"
+          name={mapsNames.deckScatter}
+          className="p-m-3"
           label={`${
-            mapDeckGridIsActive ? mapStatusButton.close : mapStatusButton.open
+            mapsStatuses[mapsNames.deckScatter]
+              ? mapStatusButton.close
+              : mapStatusButton.open
           } карту Deck Grid`}
-          onClick={() => setMapDeckGridIsActive(!mapDeckGridIsActive)}
+          onClick={changeMapStatus}
         />
         <Button
-          className="p-mr-3"
+          name={mapsNames.pigeon}
+          className="p-m-3"
           label={`${
-            mapPigeonIsActive ? mapStatusButton.close : mapStatusButton.open
+            mapsStatuses.pigeon ? mapStatusButton.close : mapStatusButton.open
           } карту Pigeon`}
-          onClick={() => setMapPigeonIsActive(!mapPigeonIsActive)}
+          onClick={changeMapStatus}
         />
         <Button
-          className="p-mr-3"
+          name={mapsNames.leaflet}
+          className="p-m-3"
           label={`${
-            mapLeafletIsActive ? mapStatusButton.close : mapStatusButton.open
+            mapsStatuses.leaflet ? mapStatusButton.close : mapStatusButton.open
           } карту Leaflet`}
-          onClick={() => setMapLeafletIsActive(!mapLeafletIsActive)}
+          onClick={changeMapStatus}
         />
         <Button
-          className="p-mr-3 p-mt-3"
+          name={mapsNames.simple}
+          className="p-m-3"
           label={`${
-            mapSimpleIsActive ? mapStatusButton.close : mapStatusButton.open
+            mapsStatuses.simple ? mapStatusButton.close : mapStatusButton.open
           } карту SimpleMap`}
-          onClick={() => setMapSimpleIsActive(!mapSimpleIsActive)}
+          onClick={changeMapStatus}
         />
         <Button
-          className="p-mt-3"
+          name={mapsNames.google}
+          className="p-m-3"
           label={`${
-            mapGoogleIsActive ? mapStatusButton.close : mapStatusButton.open
+            mapsStatuses.google ? mapStatusButton.close : mapStatusButton.open
           } карту GoogleMap`}
-          onClick={() => setMapGoogleIsActive(!mapGoogleIsActive)}
+          onClick={changeMapStatus}
+        />
+        <Button
+          label="video SproutVideo"
+          className="p-m-3"
+          onClick={() => setWindowSproutVideo(!videoWindowSproutVideo)}
+        />
+        <Button
+          label="video HippoVideo"
+          className="p-m-3"
+          onClick={() => setWindowHippoVideo(!videoWindowHippoVideo)}
         />
       </div>
       <div className="edit-form-container">
